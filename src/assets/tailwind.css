@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+
+@font-face {
+    font-family: "Raleway";
+    src: url(./font/Raleway/Raleway-Regular.ttf)
+}
+
+@font-face {
+    font-family: "RalewayBold";
+    src: url(./font/Raleway/Raleway-SemiBold.ttf)
+}
+
+
+@font-face {
+    font-family: "RalewayExtra";
+    src: url(./font/Raleway/Raleway-ExtraBold.ttf)
+}
+
+
+
+
+@theme {
+    /* biru safir */
+    --color-primary: #0F52BA;
+    /* lebih pudar */
+    --color-primaryHover: #1E90FF;
+    /* transparansi */
+    --color-primaryLight: rgba(15, 82, 186, 0.2);
+
+    /* font */
+    --font-Raleway: "Raleway", sans-serif;
+    --font-RalewayBold: "RalewayBold", sans-serif;
+    --font-RalewayExtra: "RalewayExtra", sans-serif;
+}

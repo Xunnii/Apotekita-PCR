@@ -1,0 +1,142 @@
+[
+    {
+        "id": 1,
+        "name": "Paracetamol",
+        "description": "Obat penurun panas dan pereda nyeri ringan hingga sedang.",
+        "price": 5000,
+        "image": "https://www.pexels.com/photo/medicine-in-a-bottle-7693746/"
+    },
+    {
+        "id": 2,
+        "name": "Ibuprofen",
+        "description": "Obat antiinflamasi nonsteroid (NSAID) untuk meredakan nyeri dan peradangan.",
+        "price": 8000,
+        "image": "https://www.pexels.com/photo/pills-inside-a-bottle-4115873/"
+    },
+    {
+        "id": 3,
+        "name": "Aspirin",
+        "description": "Obat yang digunakan untuk mengurangi rasa sakit dan peradangan, serta untuk mencegah pembekuan darah.",
+        "price": 6000,
+        "image": "https://www.pexels.com/photo/close-up-photo-of-pills-in-the-bottle-4099739/"
+    },
+    {
+        "id": 4,
+        "name": "Cetirizine",
+        "description": "Obat antihistamin untuk meredakan gejala alergi seperti hidung tersumbat dan bersin.",
+        "price": 10000,
+        "image": "https://www.pexels.com/photo/medication-2168804/"
+    },
+    {
+        "id": 5,
+        "name": "Amoxicillin",
+        "description": "Antibiotik yang digunakan untuk mengobati berbagai infeksi bakteri.",
+        "price": 15000,
+        "image": "https://www.pexels.com/photo/medication-capsules-1001437/"
+    },
+    {
+        "id": 6,
+        "name": "Omeprazole",
+        "description": "Obat untuk mengatasi masalah asam lambung, seperti maag dan GERD.",
+        "price": 12000,
+        "image": "https://www.pexels.com/photo/selective-focus-photography-of-pill-bottles-4115873/"
+    },
+    {
+        "id": 7,
+        "name": "Loratadine",
+        "description": "Obat antihistamin yang digunakan untuk meredakan gejala alergi.",
+        "price": 9000,
+        "image": "https://www.pexels.com/photo/selective-focus-photo-of-white-pills-1010234/"
+    },
+    {
+        "id": 8,
+        "name": "Losartan",
+        "description": "Obat untuk mengobati hipertensi dan penyakit ginjal.",
+        "price": 20000,
+        "image": "https://www.pexels.com/photo/medication-2134106/"
+    },
+    {
+        "id": 9,
+        "name": "Simvastatin",
+        "description": "Obat untuk menurunkan kadar kolesterol dalam darah.",
+        "price": 25000,
+        "image": "https://www.pexels.com/photo/close-up-photo-of-medicine-bottles-1301853/"
+    },
+    {
+        "id": 10,
+        "name": "Metformin",
+        "description": "Obat yang digunakan untuk mengelola diabetes tipe 2.",
+        "price": 18000,
+        "image": "https://www.pexels.com/photo/photo-of-pills-33677/"
+    },
+    {
+        "id": 11,
+        "name": "Diphenhydramine",
+        "description": "Obat antihistamin untuk mengobati reaksi alergi, insomnia, dan mual.",
+        "price": 11000,
+        "image": "https://www.pexels.com/photo/photo-of-pill-bottles-3639738/"
+    },
+    {
+        "id": 12,
+        "name": "Furosemide",
+        "description": "Obat diuretik untuk mengobati tekanan darah tinggi dan masalah ginjal.",
+        "price": 13000,
+        "image": "https://www.pexels.com/photo/medication-pills-7412243/"
+    },
+    {
+        "id": 13,
+        "name": "Prednisolone",
+        "description": "Obat steroid yang digunakan untuk meredakan peradangan.",
+        "price": 22000,
+        "image": "https://www.pexels.com/photo/medication-pills-7714405/"
+    },
+    {
+        "id": 14,
+        "name": "Gabapentin",
+        "description": "Obat untuk mengatasi nyeri saraf dan kejang.",
+        "price": 25000,
+        "image": "https://www.pexels.com/photo/medication-in-a-bottle-2642448/"
+    },
+    {
+        "id": 15,
+        "name": "Hydrochlorothiazide",
+        "description": "Diuretik untuk mengatasi hipertensi dan retensi cairan.",
+        "price": 13000,
+        "image": "https://www.pexels.com/photo/medicines-on-the-table-1194186/"
+    },
+    {
+        "id": 16,
+        "name": "Ranitidine",
+        "description": "Obat yang digunakan untuk mengatasi masalah lambung seperti maag.",
+        "price": 17000,
+        "image": "https://www.pexels.com/photo/photo-of-medication-pills-3121843/"
+    },
+    {
+        "id": 17,
+        "name": "Hydrocodone",
+        "description": "Obat penghilang rasa sakit yang kuat dan digunakan untuk meredakan nyeri parah.",
+        "price": 30000,
+        "image": "https://www.pexels.com/photo/white-tablets-on-wooden-surface-1153015/"
+    },
+    {
+        "id": 18,
+        "name": "Clonazepam",
+        "description": "Obat penenang untuk mengatasi gangguan kecemasan dan kejang.",
+        "price": 28000,
+        "image": "https://www.pexels.com/photo/close-up-photo-of-medication-pills-1119299/"
+    },
+    {
+        "id": 19,
+        "name": "Acetaminophen",
+        "description": "Obat penghilang rasa sakit ringan dan penurun panas.",
+        "price": 4000,
+        "image": "https://www.pexels.com/photo/photo-of-pills-5686344/"
+    },
+    {
+        "id": 20,
+        "name": "Ciprofloxacin",
+        "description": "Antibiotik untuk mengobati infeksi bakteri.",
+        "price": 18000,
+        "image": "https://www.pexels.com/photo/medicines-on-table-1319822/"
+    }
+]

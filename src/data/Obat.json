@@ -1,0 +1,263 @@
+[
+    {
+      "id": 1,
+      "nama_obat": "Paracetamol",
+      "kategori": "Analgesik",
+      "harga": 5000,
+      "stok": 120,
+      "detail": {
+        "bentuk_sediaan": "Tablet",
+        "expired": "2025-10-01",
+        "dosis": "500mg"
+      },
+      "gambar": "https://pimpharma.com/wp-content/uploads/2023/02/Paracetamol-Bliste-LeftArtboard-1-copy-min-scaled.jpg"
+    },
+    {
+      "id": 2,
+      "nama_obat": "Amoxicillin",
+      "kategori": "Antibiotik",
+      "harga": 10000,
+      "stok": 80,
+      "detail": {
+        "bentuk_sediaan": "Kapsul",
+        "expired": "2025-08-10",
+        "dosis": "500mg"
+      },
+      "gambar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkDXqO9CP04UJKeMcxOkUVTCaxFJYnvoBftQ&s"
+    },
+    {
+      "id": 3,
+      "nama_obat": "Ibuprofen",
+      "kategori": "Anti Inflamasi",
+      "harga": 7000,
+      "stok": 90,
+      "detail": {
+        "bentuk_sediaan": "Tablet",
+        "expired": "2026-01-15",
+        "dosis": "400mg"
+      },
+      "gambar": "https://res-1.cloudinary.com/dk0z4ums3/image/upload/c_scale,h_500,w_500/v1/production/pharmacy/products/1687424481_ibuprofen_400"
+    },
+    {
+      "id": 4,
+      "nama_obat": "Cetirizine",
+      "kategori": "Antihistamin",
+      "harga": 8500,
+      "stok": 100,
+      "detail": {
+        "bentuk_sediaan": "Tablet",
+        "expired": "2025-12-20",
+        "dosis": "10mg"
+      },
+      "gambar": "https://www.triman.co.id/images/cetirizine-crop-u5559_2x.jpg?crc=530001373"
+    },
+    {
+      "id": 5,
+      "nama_obat": "Omeprazole",
+      "kategori": "Antasida",
+      "harga": 12000,
+      "stok": 75,
+      "detail": {
+        "bentuk_sediaan": "Kapsul",
+        "expired": "2026-03-05",
+        "dosis": "20mg"
+      },
+      "gambar": "https://image.made-in-china.com/202f0j00GbIlmkqylVfA/Omeprazole-Enteric-Capsule-20mg-10-10-Box-with-GMP-Western-Medicine.webp"
+    },
+    {
+      "id": 6,
+      "nama_obat": "Metformin",
+      "kategori": "Antidiabetik",
+      "harga": 6000,
+      "stok": 110,
+      "detail": {
+        "bentuk_sediaan": "Tablet",
+        "expired": "2025-09-30",
+        "dosis": "500mg"
+      },
+      "gambar": "https://d3bbrrd0qs69m4.cloudfront.net/images/product/apotek_online_k24klik_201608171024001922_653-Metformin.jpg"
+    },
+    {
+      "id": 7,
+      "nama_obat": "Salbutamol",
+      "kategori": "Bronkodilator",
+      "harga": 9500,
+      "stok": 60,
+      "detail": {
+        "bentuk_sediaan": "Inhaler",
+        "expired": "2026-01-10",
+        "dosis": "2mg"
+      },
+      "gambar": "https://mpfshstrg.blob.core.windows.net/mpf-uat-drug-resources/ID/packshot/Ventolin%20Inhaler6002PPS0.JPG"
+    },
+    {
+      "id": 8,
+      "nama_obat": "Loperamide",
+      "kategori": "Antidiare",
+      "harga": 4000,
+      "stok": 200,
+      "detail": {
+        "bentuk_sediaan": "Kapsul",
+        "expired": "2025-06-01",
+        "dosis": "2mg"
+      },
+      "gambar": "https://image.made-in-china.com/2f0j00pfScVPadJHgD/Loperamide-Chlorhydrate-Capsules-2mg-Medicines-Pharmaceuticals.webp"
+    },
+    {
+      "id": 9,
+      "nama_obat": "Ranitidine",
+      "kategori": "Antasida",
+      "harga": 7000,
+      "stok": 50,
+      "detail": {
+        "bentuk_sediaan": "Tablet",
+        "expired": "2025-05-01",
+        "dosis": "150mg"
+      },
+      "gambar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvLqfJ-t76y3bfrzn0RyLT68NFB7C-uqI59Q&s"
+    },
+    {
+      "id": 10,
+      "nama_obat": "Chlorpheniramine",
+      "kategori": "Antihistamin",
+      "harga": 3000,
+      "stok": 130,
+      "detail": {
+        "bentuk_sediaan": "Tablet",
+        "expired": "2026-02-11",
+        "dosis": "4mg"
+      },
+      "gambar": "https://d3bbrrd0qs69m4.cloudfront.net/images/product/apotek_online_k24klik_20211218103711359225_CHLORPHENIRAMINE-TRIMAN-4MG-TAB-100S-removebg-preview.png"
+    },
+      {
+        "id": 11,
+        "nama_obat": "Amlodipine",
+        "kategori": "Antihipertensi",
+        "harga": 9000,
+        "stok": 70,
+        "detail": {
+          "bentuk_sediaan": "Tablet",
+          "expired": "2026-07-01",
+          "dosis": "5mg"
+        },
+        "gambar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStL3KacI3XYUu_uzuOkss9DHG0ARBVMGYEUg&s"
+      },
+      {
+        "id": 12,
+        "nama_obat": "Simvastatin",
+        "kategori": "Antikolesterol",
+        "harga": 8500,
+        "stok": 65,
+        "detail": {
+          "bentuk_sediaan": "Tablet",
+          "expired": "2025-11-30",
+          "dosis": "20mg"
+        },
+        "gambar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqkbwarPRBlGxlHQS_0F7mhRkFFw4NQ0hUJg&s"
+      },
+      {
+        "id": 13,
+        "nama_obat": "Diazepam",
+        "kategori": "Sedatif",
+        "harga": 12000,
+        "stok": 55,
+        "detail": {
+          "bentuk_sediaan": "Tablet",
+          "expired": "2026-05-20",
+          "dosis": "5mg"
+        },
+        "gambar": "https://res.cloudinary.com/dk0z4ums3/image/upload/v1737093181/attached_image/diazepam-enema.jpg"
+      },
+      {
+        "id": 14,
+        "nama_obat": "Domperidone",
+        "kategori": "Antiemetik",
+        "harga": 7500,
+        "stok": 90,
+        "detail": {
+          "bentuk_sediaan": "Tablet",
+          "expired": "2025-09-15",
+          "dosis": "10mg"
+        },
+        "gambar": "https://lirp.cdn-website.com/0ead930f/dms3rep/multi/opt/DOMPERIDONE-10MG-TABLLET-SALUT-SELAPUT-1920w.jpg"
+      },
+      {
+        "id": 15,
+        "nama_obat": "Lansoprazole",
+        "kategori": "Antasida",
+        "harga": 11000,
+        "stok": 60,
+        "detail": {
+          "bentuk_sediaan": "Kapsul",
+          "expired": "2026-08-25",
+          "dosis": "30mg"
+        },
+        "gambar": "https://storage.googleapis.com/rxstorage/Product/Photos/farmaku_lansoprazole-30-mg-novell-01.jpg"
+      },
+      {
+        "id": 16,
+        "nama_obat": "Ciprofloxacin",
+        "kategori": "Antibiotik",
+        "harga": 10000,
+        "stok": 100,
+        "detail": {
+          "bentuk_sediaan": "Tablet",
+          "expired": "2025-12-10",
+          "dosis": "500mg"
+        },
+        "gambar": "https://res-1.cloudinary.com/dk0z4ums3/image/upload/c_scale,h_500,w_500/v1/production/pharmacy/products/1694345917_cipro_500-removebg-preview"
+      },
+      {
+        "id": 17,
+        "nama_obat": "Ketoconazole",
+        "kategori": "Antijamur",
+        "harga": 9500,
+        "stok": 85,
+        "detail": {
+          "bentuk_sediaan": "Tablet",
+          "expired": "2026-01-20",
+          "dosis": "200mg"
+        },
+        "gambar": "https://storage.googleapis.com/rxstorage/Product/Photos/farmaku_ketoconazole-200-mg-tablet-dexa-01.jpg"
+      },
+      {
+        "id": 18,
+        "nama_obat": "Hydrochlorothiazide",
+        "kategori": "Diuretik",
+        "harga": 6500,
+        "stok": 75,
+        "detail": {
+          "bentuk_sediaan": "Tablet",
+          "expired": "2025-08-30",
+          "dosis": "25mg"
+        },
+        "gambar": "https://d3bbrrd0qs69m4.cloudfront.net/images/product/apotek_online_k24klik_20200814033654359225_HYDROCHLOROTHIAZIDE.jpg"
+      },
+      {
+        "id": 19,
+        "nama_obat": "Mebendazole",
+        "kategori": "Anthelmintik",
+        "harga": 4000,
+        "stok": 95,
+        "detail": {
+          "bentuk_sediaan": "Tablet",
+          "expired": "2026-03-10",
+          "dosis": "100mg"
+        },
+        "gambar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJUfydqAwO7m0iLnDTvaXsqKpFfnKLarvk7w&s"
+      },
+      {
+        "id": 20,
+        "nama_obat": "Dexamethasone",
+        "kategori": "Kortikosteroid",
+        "harga": 10500,
+        "stok": 40,
+        "detail": {
+          "bentuk_sediaan": "Tablet",
+          "expired": "2025-10-05",
+          "dosis": "0.5mg"
+        },
+        "gambar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXHHg_5Y7EI90n8MISiKzYWABUQ-znjpo6jg&s"
+      }
+  ]
+  
