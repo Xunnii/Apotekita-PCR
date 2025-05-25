@@ -1,4 +1,5 @@
-import medicines from '../data/obat.json';
+import data from '../data/obat.json'; // pastikan huruf kecil semua
+
 
 
 function MedicineCard({ nama_obat, kategori, harga, gambar }) {
@@ -24,7 +25,7 @@ export default function DaftarObatPage() {
                 <div className="max-w-6xl mx-auto">
                     <h2 className="font-RalewayExtra text-[32px] text-2xl font-bold text-blue-800 mb-8 text-center ">Daftar Obat</h2>
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        {medicines.map((item) => (
+                        {data.map((item) => (
                             <MedicineCard
                                 key={item.id}
                                 nama_obat={item.nama_obat}
