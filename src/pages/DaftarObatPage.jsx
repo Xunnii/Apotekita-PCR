@@ -1,4 +1,4 @@
-import data from '../data/obat.json'; // pastikan huruf kecil semua
+import data from 'data/obat.json'; // pastikan huruf kecil semua
 
 
 
