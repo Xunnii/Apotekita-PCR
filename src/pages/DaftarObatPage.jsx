@@ -1,6 +1,4 @@
-import data from 'data/obat.json'; // pastikan huruf kecil semua
-
-
+import { useEffect, useState } from "react";
 
 function MedicineCard({ nama_obat, kategori, harga, gambar }) {
     return (
@@ -19,6 +17,17 @@ function MedicineCard({ nama_obat, kategori, harga, gambar }) {
 }
 
 export default function DaftarObatPage() {
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        fetch("/data/Obat.json")
+            .then((res) => res.json())
+            .then((json) => setData(json))
+            .catch((err) => console.error("Gagal ambil data JSON:", err));
+    }, []);
+
+
+
     return (
         <div>
             <section className="font-Raleway bg-gray-50 min-h-screen py-12 px-4">
