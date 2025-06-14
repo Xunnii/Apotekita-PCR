@@ -10,6 +10,7 @@ const HomePage = lazy(() => import('./pages/HomePage'));
 // const HomePage = lazy(() => import('./pages/HomePage'));
 const ApotekerPage = lazy(() => import('./pages/ApotekerPage'));
 const DaftarObatPage = lazy(() => import('./pages/DaftarObatPage'));
+const DetailObatPage = lazy(() => import('./pages/DetailObatPage'));
 const CekMataPage = lazy(() => import('./pages/CekMataPage'));
 const KonsultasiDokter = lazy(() => import('./pages/KonsultasiDokterPage'));
 const ErrorPage = lazy(() => import('./components/ErrorPage'));
@@ -25,6 +26,7 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/daftar-obat" element={<DaftarObatPage />} />
+          <Route path="/detail-obat/:id" element={<DetailObatPage />} />
           <Route path="/cek-mata" element={<CekMataPage />} />
           <Route path="/konsultasi-dokter" element={<KonsultasiDokter />} />
           <Route path="/apoteker" element={<ApotekerPage />} />
