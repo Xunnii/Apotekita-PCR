@@ -1,9 +1,24 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Button } from 'antd';
+import { supabase } from '../../config/supabase';
 
 function MedicineCard({ id, nama_obat, kategori, harga, gambar }) {
     const navigate = useNavigate();
+
+    const handleAddToCart = async (obat) => {
+        const { data } = await supabase.auth.getSession();
+        if (!data.session) {
+            navigate('/login');
+            return;
+        }
+        // Tambahkan ke keranjang (localStorage)
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.push(obat);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        // (Opsional) Tampilkan notifikasi sukses
+        // alert('Obat berhasil ditambahkan ke keranjang!');
+    };
 
     return (
         <Card
@@ -24,7 +39,7 @@ function MedicineCard({ id, nama_obat, kategori, harga, gambar }) {
                             type="primary"
                             onClick={e => {
                                 e.stopPropagation();
-                                // Add to cart logic here
+                                handleAddToCart({ id, nama_obat, kategori, harga, gambar });
                             }}
                         >
                             Tambah ke Keranjang

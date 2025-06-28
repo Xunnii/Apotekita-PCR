@@ -27,6 +27,7 @@ const Forgot = lazy(() => import('./pages/Auth/Forgot'));
 const Register = lazy(() => import('./pages/Auth/Register'));
 const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const CartPage = lazy(() => import('./pages/CartPage'));
 
 export default function App() {
   return (
@@ -43,6 +44,11 @@ export default function App() {
           <Route path="/profile" element={
             <PrivateRoute>
               <ProfilePage />
+            </PrivateRoute>
+          } />
+          <Route path="/keranjang" element={
+            <PrivateRoute>
+              <CartPage />
             </PrivateRoute>
           } />
         </Route>

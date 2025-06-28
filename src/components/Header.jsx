@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Button } from "antd";
-import { AppstoreOutlined, UserOutlined, LoginOutlined, HomeOutlined, MedicineBoxOutlined, EyeOutlined, TeamOutlined, LogoutOutlined } from "@ant-design/icons";
+import { Layout, Menu, Button, Badge } from "antd";
+import { AppstoreOutlined, UserOutlined, LoginOutlined, HomeOutlined, MedicineBoxOutlined, EyeOutlined, TeamOutlined, LogoutOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { supabase } from '../config/supabase';
 import { getProfileById } from '../services/profileService';
@@ -39,6 +39,7 @@ export default function AppHeader() {
     const [current, setCurrent] = useState('/');
     const [session, setSession] = useState(null);
     const [profile, setProfile] = useState(null);
+    const [cartCount, setCartCount] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -64,6 +65,17 @@ export default function AppHeader() {
         };
         fetchProfile();
     }, [session]);
+
+    // Update cart count from localStorage
+    useEffect(() => {
+        const updateCartCount = () => {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            setCartCount(cart.length);
+        };
+        updateCartCount();
+        window.addEventListener('storage', updateCartCount);
+        return () => window.removeEventListener('storage', updateCartCount);
+    }, []);
 
     const onClick = (e) => {
         setCurrent(e.key);
@@ -105,8 +117,17 @@ export default function AppHeader() {
                     justifyContent: "center"
                 }}
             />
-            {/* Auth Buttons */}
+            {/* Cart Icon */}
             <div className="flex items-center space-x-2 ml-4">
+                <Badge count={cartCount} size="small" offset={[0, 6]}>
+                    <Button
+                        shape="circle"
+                        icon={<ShoppingCartOutlined style={{ fontSize: 20 }} />}
+                        onClick={() => navigate('/keranjang')}
+                        style={{ border: 'none', background: 'none', boxShadow: 'none' }}
+                        aria-label="Keranjang"
+                    />
+                </Badge>
                 {session ? (
                     <>
                         {profile && (
