@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Menu, Button } from "antd";
-import { AppstoreOutlined, UserOutlined, LoginOutlined, HomeOutlined, MedicineBoxOutlined, EyeOutlined, TeamOutlined } from "@ant-design/icons";
+import { AppstoreOutlined, UserOutlined, LoginOutlined, HomeOutlined, MedicineBoxOutlined, EyeOutlined, TeamOutlined, LogoutOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { supabase } from '../config/supabase';
+import { getProfileById } from '../services/profileService';
 
 const { Header } = Layout;
 
@@ -35,11 +37,42 @@ const items = [
 
 export default function AppHeader() {
     const [current, setCurrent] = useState('/');
+    const [session, setSession] = useState(null);
+    const [profile, setProfile] = useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data }) => {
+            setSession(data.session);
+        });
+        const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+        });
+        return () => {
+            listener.subscription.unsubscribe();
+        };
+    }, []);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            if (session && session.user) {
+                const { data } = await getProfileById(session.user.id);
+                setProfile(data);
+            } else {
+                setProfile(null);
+            }
+        };
+        fetchProfile();
+    }, [session]);
 
     const onClick = (e) => {
         setCurrent(e.key);
         navigate(e.key);
+    };
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        navigate('/login');
     };
 
     return (
@@ -74,12 +107,25 @@ export default function AppHeader() {
             />
             {/* Auth Buttons */}
             <div className="flex items-center space-x-2 ml-4">
-                <Button icon={<LoginOutlined />} type="text">
-                    Sign In
-                </Button>
-                <Button icon={<UserOutlined />} type="primary">
-                    Sign Up
-                </Button>
+                {session ? (
+                    <>
+                        {profile && (
+                            <span className="font-semibold text-gray-700 mr-2">{profile.nama}</span>
+                        )}
+                        <Button icon={<LogoutOutlined />} type="primary" danger onClick={handleLogout}>
+                            Logout
+                        </Button>
+                    </>
+                ) : (
+                    <>
+                        <Button icon={<LoginOutlined />} type="text" onClick={() => navigate('/login')}>
+                            Sign In
+                        </Button>
+                        <Button icon={<UserOutlined />} type="primary" onClick={() => navigate('/register')}>
+                            Sign Up
+                        </Button>
+                    </>
+                )}
             </div>
         </Header>
     );

@@ -10,6 +10,7 @@ import NotePages from './pages/admin/NoterPage';
 // import MedicineDashboard from './components/admin/MedicineDashboard';
 import MedicinePage from './pages/admin/MedicinePage';
 import ConsultationAdminPage from './pages/admin/ConsultationAdminPage';
+import PrivateRoute from './components/PrivateRoute';
 // import AdminLayout from './layout/AdminLayout';
 
 // Lazy load components
@@ -25,6 +26,7 @@ const Login = lazy(() => import('./pages/Auth/Login'));
 const Forgot = lazy(() => import('./pages/Auth/Forgot'));
 const Register = lazy(() => import('./pages/Auth/Register'));
 const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 
 export default function App() {
   return (
@@ -38,10 +40,19 @@ export default function App() {
           <Route path="/cek-mata" element={<CekMataPage />} />
           <Route path="/konsultasi-dokter" element={<KonsultasiDokter />} />
           <Route path="/apoteker" element={<ApotekerPage />} />
+          <Route path="/profile" element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          } />
         </Route>
 
-        {/* ADMIN */}
-        <Route path="/admin" element={<AdminLayout />}>
+        {/* ADMIN - diproteksi dengan PrivateRoute */}
+        <Route path="/admin" element={
+          <PrivateRoute>
+            <AdminLayout />
+          </PrivateRoute>
+        }>
           {/* <Route index element={<BlankPage />} /> */}
           <Route index element={<DashboardPage />} />
           <Route path="blank" element={<BlankPage />} />
