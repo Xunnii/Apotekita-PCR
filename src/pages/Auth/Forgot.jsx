@@ -1,6 +1,6 @@
 export default function Forgot() {
     return (
-        <div>
+        <div className="mb-6">
             <h2 className="font-RalewayBold text-2xl font-semibold text-gray-700 mb-2 text-center">
                 Lupa password kang???
             </h2>
@@ -27,7 +27,7 @@ export default function Forgot() {
                 </div>
                 <button
                     type="submit"
-                    className="w-full bg-primary hover:bg-primaryHover text-white font-semibold py-2 px-4
+                    className="w-full bg-primary hover:bg-pudar2 text-white font-semibold py-2 px-4
                         rounded-lg transition duration-300"
                 >
                     Send Reset Link

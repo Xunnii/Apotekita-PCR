@@ -1,22 +1,76 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import { supabase } from '../../config/supabase';
+import { insertProfile } from '../../services/profileService';
 
 export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
-    const [form, setForm] = useState({ email: '', phone: '', password: '' });
+    const [form, setForm] = useState({ email: '', phone: '', password: '', nama: '' });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
+    const handleRegister = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        setSuccess('');
+        // 1. Register ke Supabase Auth
+        const { data, error: signUpError } = await supabase.auth.signUp({
+            email: form.email,
+            password: form.password,
+        });
+        if (signUpError) {
+            setError(signUpError.message);
+            setLoading(false);
+            return;
+        }
+        // 2. Insert ke tabel profile
+        const user = data.user || data;
+        const { error: profileError } = await insertProfile({
+            id: user.id,
+            email: form.email,
+            phone: form.phone,
+            nama: form.nama,
+        });
+        if (profileError) {
+            setError(profileError.message);
+            setLoading(false);
+            return;
+        }
+        setSuccess('Registrasi berhasil! Silakan cek email untuk verifikasi atau login.');
+        setLoading(false);
+        setForm({ email: '', phone: '', password: '', nama: '' });
+    };
+
     return (
-        <div className="mt-4">
+        <div className="mt-4 mb-10">
             <div className="mb-6 text-center">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-2">Create an account</h2>
-                <p className="text-gray-500 text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lobortis maximus</p>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">Registrasi Form</h2>
+                <p className="text-gray-500 text-sm">Gunakan email anda, dan password yang sesuai</p>
             </div>
-            <form>
+            {error && <div className="bg-red-100 text-red-700 p-2 mb-3 rounded text-sm">{error}</div>}
+            {success && <div className="bg-green-100 text-green-700 p-2 mb-3 rounded text-sm">{success}</div>}
+            <form onSubmit={handleRegister}>
+                {/* Nama */}
+                <div className="mb-4">
+                    <label htmlFor="nama" className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                    <input
+                        type="text"
+                        id="nama"
+                        name="nama"
+                        className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                        placeholder="Nama Lengkap"
+                        value={form.nama}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
                 {/* Email */}
                 <div className="mb-4 relative">
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -28,6 +82,7 @@ export default function Register() {
                         placeholder="you@example.com"
                         value={form.email}
                         onChange={handleChange}
+                        required
                     />
                 </div>
                 {/* Phone */}
@@ -41,8 +96,8 @@ export default function Register() {
                         placeholder="08xxxxxxxxxx"
                         value={form.phone}
                         onChange={handleChange}
+                        required
                     />
-                    <p className="text-xs text-gray-400 mt-1">We strongly recommend adding a phone number. This will help verify your account and keep it safe.</p>
                 </div>
                 {/* Password */}
                 <div className="mb-2 relative">
@@ -56,6 +111,7 @@ export default function Register() {
                             placeholder="********"
                             value={form.password}
                             onChange={handleChange}
+                            required
                         />
                         <button
                             type="button"
@@ -77,9 +133,10 @@ export default function Register() {
                 </div>
                 <button
                     type="submit"
-                    className="w-full bg-black hover:bg-gray-900 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 mb-2"
+                    className="w-full bg-primary hover:bg-pudar2 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 mb-2"
+                    disabled={loading}
                 >
-                    Sign in
+                    {loading ? 'Registering...' : 'Register'}
                 </button>
             </form>
             <div className="flex justify-between items-center mt-2 text-sm">
@@ -89,9 +146,6 @@ export default function Register() {
                 </span>
                 <Link to="/forgot" className="text-gray-400 hover:underline">Forgot your user ID or password?</Link>
             </div>
-            <p className="text-xs text-gray-400 mt-4 text-center">
-                By creating an account, you agree to the <span className="underline cursor-pointer">Terms of use</span> and <span className="underline cursor-pointer">Privacy Policy.</span>
-            </p>
         </div>
     );
 }

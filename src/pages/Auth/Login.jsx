@@ -1,10 +1,8 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import axios from "axios"
+import { supabase } from '../../config/supabase'
 import { ImSpinner2 } from "react-icons/im"
 import { BsFillExclamationDiamondFill } from "react-icons/bs"
-
-
 
 export default function Login() {
     /* navigate, state & handleChange*/
@@ -26,35 +24,26 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
-        setError(false)
-        console.log("Login data:", dataForm);
+        setError("")
 
-        axios
-            .post("https://dummyjson.com/user/login", {
-                username: dataForm.email,
-                password: dataForm.password,
-            })
-            .then((response) => {
-                // Jika status bukan 200, tampilkan pesan error
-                if (response.status !== 200) {
-                    setError(response.data.message);
-                    return;
-                }
+        // Login ke Supabase Auth
+        const { error: loginError } = await supabase.auth.signInWithPassword({
+            email: dataForm.email,
+            password: dataForm.password,
+        })
 
-                // Redirect ke dashboard jika login sukses
-                navigate("/");
-            })
-            .catch((err) => {
-                if (err.response) {
-                    setError(err.response.data.message || "An error occurred");
-                } else {
-                    setError(err.message || "An unknown error occurred");
-                }
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        if (loginError) {
+            if (loginError.message && loginError.message.toLowerCase().includes('email not confirmed')) {
+                setError('Akun Anda belum terverifikasi. Silakan cek email dan klik link verifikasi sebelum login.')
+            } else {
+                setError(loginError.message)
+            }
+            setLoading(false)
+            return
+        }
 
+        setLoading(false)
+        navigate("/")
     }
     /* error & loading status */
     const errorInfo = error ? (
@@ -75,20 +64,25 @@ export default function Login() {
             {errorInfo}
 
             {loadingInfo}
+
+            <div className="mb-10 text-center">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">Login Form</h2>
+                <p className="text-gray-500 text-sm">Gunakan email dan password akun Anda untuk masuk</p>
+            </div>
             <form onSubmit={handleSubmit}>
                 <div className="mb-5">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Email Kamu
+                        Email
                     </label>
                     <input
                         name="email"
                         type="text"
                         id="email"
-                        className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm
-                            placeholder-gray-400"
-                        placeholder="Name"
+                        className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                        placeholder="you@example.com"
                         onChange={handleChange}
-
+                        value={dataForm.email}
+                        required
                     />
                 </div>
                 <div className="mb-6">
@@ -98,38 +92,34 @@ export default function Login() {
                         </label>
                         <Link
                             to="/forgot"
-                            className="text-sm text-primary hover:text-primaryHover transition duration-300"
+                            className="text-sm text-primary hover:text-pudar2 transition duration-300"
                         >
                             Forgot Password?
                         </Link>
                     </div>
                     <input
-
                         type="password"
                         id="password"
-                        className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm
-                            placeholder-gray-400"
+                        className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
                         placeholder="Password"
                         onChange={handleChange}
                         name="password"
-
+                        value={dataForm.password}
+                        required
                     />
                 </div>
                 <button
                     type="submit"
-                    className="w-full bg-primary hover:bg-primaryHover text-white font-semibold py-2 px-4
-                        rounded-lg transition duration-300"
+                    className="w-full bg-primary hover:bg-pudar2 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 mb-2"
+                    disabled={loading}
                 >
-                    Login
+                    {loading ? 'Logging in...' : 'Login'}
                 </button>
-                <div className="mt-4 text-center">
-                    <span className="text-sm text-gray-600">Don't have an account? </span>
-                    <Link
-                        to="/register"
-                        className="text-sm font-medium text-primaryHover hover:text-primary transition duration-300"
-                    >
-                        Sign up
-                    </Link>
+                <div className="flex justify-between items-center mt-2 text-sm">
+                    <span>
+                        Belum punya akun?{' '}
+                        <Link to="/register" className="text-primary hover:underline">Sign up</Link>
+                    </span>
                 </div>
             </form>
         </div>

@@ -1,5 +1,4 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import Logo from '../assets/Logo.png'
 
 export default function AuthLayout() {
     const location = useLocation();
@@ -15,15 +14,15 @@ export default function AuthLayout() {
                     <Link to="/forgot" className="hover:underline">Forgot your user ID or password?</Link>
                 </div>
             </div>
-            <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-2xl font-Raleway relative flex flex-col items-center">
+            <div className="bg-white p-8 pb-2 rounded-2xl shadow-md w-full max-w-2xl font-Raleway relative flex flex-col items-center">
                 {/* Avatar/logo bulat overlap */}
                 <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-20 h-20 bg-gray-200 rounded-full border-4 border-white flex items-center justify-center shadow">
-                    <img src={Logo} alt="Logo" className="w-14 h-14 object-contain rounded-full" />
+                    <img src="/img/LogoAK/AK_kotaknobg.png" alt="Logo" className="w-14 h-14 object-contain rounded-full" />
                 </div>
-                <div className="mt-0 w-full">
+                <div className="mt-1 mb-0 w-full">
                     <Outlet />
                 </div>
-                <p className="text-center text-sm text-gray-500 mt-6">
+                <p className="text-center text-sm text-gray-500 mt-16">
                     apotek keluarga registered 2025
                 </p>
             </div>

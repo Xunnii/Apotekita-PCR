@@ -24,13 +24,13 @@
     /* merah punchy */
     --color-primary: #9A0002;
     /*  pudar 1 */
-    --color-pudar1: #AE3234;
+    --color-pudar1: #ae3234;
     /* pudar 2 */
-    --color-pudar2: #C26667;
+    --color-pudar2: #b84c4d;
 
 
     /* coba yang lain  */
-    --color--coba: ##EFE6DE;
+    --color-coba: #EFE6DE;
     --color-primaryHover: #1E90FF;
     /* transparansi */
     --color-primaryLight: rgba(15, 82, 186, 0.2);
@@ -39,4 +39,64 @@
     --font-Raleway: "Raleway", sans-serif;
     --font-RalewayBold: "RalewayBold", sans-serif;
     --font-RalewayExtra: "RalewayExtra", sans-serif;
+}
+
+/* Custom styles untuk Ant Design Menu - Override semua border dan color */
+.ant-menu-horizontal .ant-menu-item:hover,
+.ant-menu-horizontal .ant-menu-submenu:hover {
+    color: #9A0002 !important;
+    border-bottom-color: #9A0002 !important;
+}
+
+.ant-menu-horizontal .ant-menu-item-selected,
+.ant-menu-horizontal .ant-menu-item-selected::after {
+    color: #9A0002 !important;
+    border-bottom-color: #9A0002 !important;
+    border-bottom: 2px solid #9A0002 !important;
+    font-weight: 700 !important;
+}
+
+.ant-menu-horizontal .ant-menu-item-active {
+    color: #9A0002 !important;
+    border-bottom-color: #9A0002 !important;
+}
+
+/* Override pseudo-element untuk garis bawah */
+.ant-menu-horizontal .ant-menu-item::after,
+.ant-menu-horizontal .ant-menu-submenu::after {
+    border-bottom-color: transparent !important;
+}
+
+
+/* Custom button hover untuk auth buttons */
+.ant-btn-primary:hover {
+    background-color: #9A0002 !important;
+    border-color: #9A0002 !important;
+}
+
+.ant-btn-text:hover {
+    color: #9A0002 !important;
+    background-color: rgba(154, 0, 2, 0.1) !important;
+}
+
+/* Custom focus states */
+.ant-menu-horizontal .ant-menu-item:focus,
+.ant-menu-horizontal .ant-menu-submenu:focus {
+    color: #9A0002 !important;
+}
+
+/* Responsive menu adjustments */
+@media (max-width: 768px) {
+    .ant-menu-horizontal {
+        font-size: 14px !important;
+    }
+}
+
+.ant-menu-horizontal .ant-menu-item:hover {
+    font-weight: 700 !important;
+}
+
+.bg-pudar2,
+.bg-primary {
+    color: #fff !important;
 }
