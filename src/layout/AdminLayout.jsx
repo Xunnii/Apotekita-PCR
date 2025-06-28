@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import Sidebar from '../components/Admin/Sidebar';
-import Header from '../components/Admin/Header';
-import Overlay from '../components/Admin/Overlay';
-import Breadcrumb from '../components/Admin/Breadcrumb';
+import Sidebar from '../components/admin/Sidebar';
+import Header from '../components/admin/Header';
+import Overlay from '../components/admin/Overlay';
+import Breadcrumb from '../components/admin/Breadcrumb';
 
 export default function AdminLayout() {
     const [darkMode, setDarkMode] = useState(false);
