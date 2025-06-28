@@ -4,25 +4,33 @@ import MainLayout from './layout/MainLayout';
 import AuthLayout from './layout/AuthLayout';
 import Loading from './components/Loading';
 import './assets/tailwind.css';
+import AdminLayout from './layout/AdminLayout';
+import BlankPage from './pages/admin/BlankPage';
+import NotePages from './pages/admin/NoterPage';
+// import MedicineDashboard from './components/admin/MedicineDashboard';
+import MedicinePage from './pages/admin/MedicinePage';
+import ConsultationAdminPage from './pages/admin/ConsultationAdminPage';
+// import AdminLayout from './layout/AdminLayout';
 
 // Lazy load components
-const HomePage = lazy(() => import('./pages/HomePage'));
+const HomePage = lazy(() => import('./pages/guest/HomePage'));
 // const HomePage = lazy(() => import('./pages/HomePage'));
-const ApotekerPage = lazy(() => import('./pages/ApotekerPage'));
-const DaftarObatPage = lazy(() => import('./pages/DaftarObatPage'));
-const DetailObatPage = lazy(() => import('./pages/DetailObatPage'));
-const CekMataPage = lazy(() => import('./pages/CekMataPage'));
-const KonsultasiDokter = lazy(() => import('./pages/KonsultasiDokterPage'));
+const ApotekerPage = lazy(() => import('./pages/guest/ApotekerPage'));
+const DaftarObatPage = lazy(() => import('./pages/guest/DaftarObatPage'));
+const DetailObatPage = lazy(() => import('./pages/guest/DetailObatPage'));
+const CekMataPage = lazy(() => import('./pages/guest/CekMataPage'));
+const KonsultasiDokter = lazy(() => import('./pages/guest/KonsultasiDokterPage'));
 const ErrorPage = lazy(() => import('./components/ErrorPage'));
 const Login = lazy(() => import('./pages/Auth/Login'));
 const Forgot = lazy(() => import('./pages/Auth/Forgot'));
 const Register = lazy(() => import('./pages/Auth/Register'));
+const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
 
 export default function App() {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
-        {/* Rute dengan MainLayout */}
+        {/* Main/Home */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/daftar-obat" element={<DaftarObatPage />} />
@@ -30,6 +38,17 @@ export default function App() {
           <Route path="/cek-mata" element={<CekMataPage />} />
           <Route path="/konsultasi-dokter" element={<KonsultasiDokter />} />
           <Route path="/apoteker" element={<ApotekerPage />} />
+        </Route>
+
+        {/* ADMIN */}
+        <Route path="/admin" element={<AdminLayout />}>
+          {/* <Route index element={<BlankPage />} /> */}
+          <Route index element={<DashboardPage />} />
+          <Route path="blank" element={<BlankPage />} />
+          <Route path="notes" element={<NotePages />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="medicine" element={<MedicinePage />} />
+          <Route path="konsultasi-dokter" element={<ConsultationAdminPage />} />
         </Route>
 
         {/* Rute halaman error - tanpa MainLayout */}

@@ -1,30 +1,38 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Card, Button } from 'antd';
 
 function MedicineCard({ id, nama_obat, kategori, harga, gambar }) {
     const navigate = useNavigate();
 
     return (
-        <div
-            className="bg-white shadow rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
+        <Card
+            hoverable
+            cover={<img alt={nama_obat} src={gambar} style={{ height: 200, objectFit: 'cover' }} />}
             onClick={() => navigate(`/detail-obat/${id}`)}
+            style={{ cursor: 'pointer' }}
         >
-            <img src={gambar} alt={nama_obat} className="w-full h-48 object-cover" />
-            <div className="p-4">
-                <h3 className="text-lg font-bold text-gray-800">{nama_obat}</h3>
-                <p className="text-sm text-gray-600 mb-2">{kategori}</p>
-                <p className="text-blue-600 font-semibold text-sm mb-4">Rp {harga.toLocaleString()}</p>
-                <button
-                    className="bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        // Add to cart logic here
-                    }}
-                >
-                    Tambah ke Keranjang
-                </button>
-            </div>
-        </div>
+            <Card.Meta
+                title={nama_obat}
+                description={
+                    <>
+                        <div style={{ color: '#888', marginBottom: 8 }}>{kategori}</div>
+                        <div style={{ color: '#1677ff', fontWeight: 600, marginBottom: 16 }}>
+                            Rp {harga.toLocaleString()}
+                        </div>
+                        <Button
+                            type="primary"
+                            onClick={e => {
+                                e.stopPropagation();
+                                // Add to cart logic here
+                            }}
+                        >
+                            Tambah ke Keranjang
+                        </Button>
+                    </>
+                }
+            />
+        </Card>
     );
 }
 

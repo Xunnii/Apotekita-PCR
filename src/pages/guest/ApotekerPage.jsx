@@ -1,13 +1,14 @@
-import MainLayout from '../layout/MainLayout';
-
+import MainLayout from '../../layout/MainLayout';
+import BreadCrumb from '../../components/BreadCrumb';
 
 export default function ApotekerPage() {
     return (
-        <div >
+        <div>
+            <BreadCrumb />
             <section className="font-Raleway bg-white py-12 px-6">
                 <div className="max-w-4xl mx-auto text-center">
                     <img
-                        src="img\Apoteker1.jpg" // Ganti dengan path gambarmu sendiri di public/images/
+                        src="img/Apoteker1.jpg" // Ganti dengan path gambarmu sendiri di public/images/
                         alt="Foto Apoteker"
                         className="w-48 h-48 rounded-full mx-auto object-cover mb-6 shadow-lg"
                     />

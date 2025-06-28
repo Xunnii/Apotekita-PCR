@@ -21,9 +21,16 @@
 
 
 @theme {
-    /* biru safir */
-    --color-primary: #0F52BA;
-    /* lebih pudar */
+    /* merah punchy */
+    --color-primary: #9A0002;
+    /*  pudar 1 */
+    --color-pudar1: #AE3234;
+    /* pudar 2 */
+    --color-pudar2: #C26667;
+
+
+    /* coba yang lain  */
+    --color--coba: ##EFE6DE;
     --color-primaryHover: #1E90FF;
     /* transparansi */
     --color-primaryLight: rgba(15, 82, 186, 0.2);

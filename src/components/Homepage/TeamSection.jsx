@@ -12,11 +12,16 @@ function TeamCard({ name, role, desc }) {
 export default function TeamSection() {
     return (
         <section className="bg-gray-50 py-20">
-            <div className="container mx-auto px-4 grid md:grid-cols-2 gap-8">
+            <div className="container mx-auto px-4 grid md:grid-cols-3 gap-8">
                 <TeamCard
                     name="Jose Rodriguez"
                     role="CEO"
                     desc="Lorem Ipsum is that it has a more-or-less normal distribution..."
+                />
+                <TeamCard
+                    name="Et Harumseter"
+                    role="CTO"
+                    desc="Lorem Ipsum has been the industry’s standard dummy text..."
                 />
                 <TeamCard
                     name="Et Harumseter"

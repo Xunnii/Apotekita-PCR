@@ -1,5 +1,5 @@
-import PageHeader from '../components/PageHeader';
-import MainLayout from '../layout/MainLayout';
+import PageHeader from '../../components/PageHeader';
+import MainLayout from '../../layout/MainLayout';
 
 export default function CekMataPage() {
     return (
