@@ -142,7 +142,8 @@ export default function AppHeader() {
                         <Button icon={<LoginOutlined />} type="text" onClick={() => navigate('/login')}>
                             Sign In
                         </Button>
-                        <Button icon={<UserOutlined />} type="primary" onClick={() => navigate('/register')}>
+                        <Button icon={<UserOutlined />}
+                            type="primary" onClick={() => navigate('/register')}>
                             Sign Up
                         </Button>
                     </>

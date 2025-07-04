@@ -1,4 +1,4 @@
-import MedicineDashboard from '../../components/Admin/MedicineDashboard';
+import MedicineDashboard from '../../components/admin/MedicineDashboard';
 
 const DashboardPage = () => {
     return (
