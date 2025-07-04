@@ -29,8 +29,11 @@ const Register = lazy(() => import('./pages/Auth/Register'));
 const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
+const OrderSuccessPage = lazy(() => import('./pages/OrderSuccessPage'));
 const DaftarAlkesPage = lazy(() => import('./pages/guest/DaftarAlkesPage'));
 const DetailAlkesPage = lazy(() => import('./pages/guest/DetailAlkesPage'));
+const PelangganPage = lazy(() => import('./pages/admin/PelangganPage'));
+const RiwayatPembelianPage = lazy(() => import('./pages/admin/RiwayatPembelianPage'));
 
 export default function App() {
   return (
@@ -56,6 +59,11 @@ export default function App() {
               <CartPage />
             </PrivateRoute>
           } />
+          <Route path="/order-success" element={
+            <PrivateRoute>
+              <OrderSuccessPage />
+            </PrivateRoute>
+          } />
         </Route>
 
         {/* ADMIN - diproteksi dengan PrivateRoute */}
@@ -71,6 +79,8 @@ export default function App() {
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="medicine" element={<MedicinePage />} />
           <Route path="alkes" element={<AlkesPage />} />
+          <Route path="pelanggan" element={<PelangganPage />} />
+          <Route path="riwayat-pembelian" element={<RiwayatPembelianPage />} />
           <Route path="konsultasi-dokter" element={<ConsultationAdminPage />} />
         </Route>
 

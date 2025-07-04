@@ -75,7 +75,8 @@ export default function AppHeader() {
     useEffect(() => {
         const updateCartCount = () => {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            setCartCount(cart.length);
+            const totalQuantity = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            setCartCount(totalQuantity);
         };
         updateCartCount();
         window.addEventListener('storage', updateCartCount);

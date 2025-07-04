@@ -26,6 +26,7 @@ export default function RiwayatPembelianPage() {
         total_pembelian: 0,
         alamat_tujuan: "",
         metode_pembayaran: "",
+        status: "pending",
         tanggal_transaksi: new Date().toISOString().slice(0, 10)
     });
 
@@ -97,38 +98,34 @@ export default function RiwayatPembelianPage() {
             setLoading(true);
             setError("");
             setSuccess("");
-            const payload = {
-                ...dataForm,
-                harga_produk: parseInt(dataForm.harga_produk),
-                jumlah: parseInt(dataForm.jumlah),
-                total_pembelian: parseInt(dataForm.total_pembelian),
-                produk_id: parseInt(dataForm.produk_id),
-                pelanggan_id: parseInt(dataForm.pelanggan_id),
-                tanggal_transaksi: dataForm.tanggal_transaksi
-            };
+            if (!dataForm.pelanggan_id) {
+                setError("Pelanggan wajib dipilih!");
+                setLoading(false);
+                return;
+            }
+            // Buat payload tanpa status jika kolom belum ada
+            const payload = { ...dataForm };
+            delete payload.status; // Hapus status sementara
+
             if (editingId) {
-                const { error } = await supabase.from('riwayat_pembelian').update(payload).eq('id', editingId);
+                // Update
+                const { error } = await supabase
+                    .from('riwayat_pembelian')
+                    .update(payload)
+                    .eq('id', editingId);
                 if (error) throw error;
                 setSuccess("Riwayat berhasil diperbarui!");
             } else {
-                const { error } = await supabase.from('riwayat_pembelian').insert([payload]);
+                // Insert
+                const { error } = await supabase
+                    .from('riwayat_pembelian')
+                    .insert([payload]);
                 if (error) throw error;
                 setSuccess("Riwayat berhasil ditambahkan!");
             }
             setShowForm(false);
             setEditingId(null);
-            setDataForm({
-                pelanggan_id: "",
-                produk_tipe: "obat",
-                produk_id: "",
-                nama_produk: "",
-                harga_produk: 0,
-                jumlah: 1,
-                total_pembelian: 0,
-                alamat_tujuan: "",
-                metode_pembayaran: "",
-                tanggal_transaksi: new Date().toISOString().slice(0, 10)
-            });
+            setDataForm({ pelanggan_id: "", produk_tipe: "obat", produk_id: "", nama_produk: "", harga_produk: 0, jumlah: 1, total_pembelian: 0, alamat_tujuan: "", metode_pembayaran: "", status: "pending", tanggal_transaksi: new Date().toISOString().slice(0, 10) });
             setTimeout(() => setSuccess(""), 3000);
             loadRiwayat();
         } catch (err) {
@@ -194,6 +191,7 @@ export default function RiwayatPembelianPage() {
             {showForm && (
                 <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
                     <form className="space-y-4" onSubmit={handleSubmit}>
+
                         <select
                             name="pelanggan_id"
                             value={dataForm.pelanggan_id}
@@ -268,6 +266,21 @@ export default function RiwayatPembelianPage() {
                             className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
                             disabled={loading}
                         />
+                        <select
+                            name="status_order"
+                            value={dataForm.status_order}
+                            onChange={handleChange}
+                            required
+                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
+                            disabled={loading}
+                        >
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+
                         <input
                             type="date"
                             name="tanggal_transaksi"
@@ -336,7 +349,7 @@ export default function RiwayatPembelianPage() {
                 {!loading && riwayat.length === 0 && <EmptyState text="Belum ada riwayat pembelian" />}
                 {!loading && riwayat.length > 0 && (
                     <GenericTable
-                        columns={["#", "Pelanggan", "Produk", "Tipe", "Harga", "Jumlah", "Total", "Alamat Tujuan", "Metode Pembayaran", "Tanggal", "Aksi"]}
+                        columns={["#", "Pelanggan", "Produk", "Tipe", "Harga", "Jumlah", "Total", "Alamat", "Status", "Tanggal", "Aksi"]}
                         data={riwayat}
                         renderRow={(item, index) => (
                             <>
@@ -347,8 +360,17 @@ export default function RiwayatPembelianPage() {
                                 <td className="px-6 py-4">Rp {item.harga_produk?.toLocaleString()}</td>
                                 <td className="px-6 py-4">{item.jumlah}</td>
                                 <td className="px-6 py-4">Rp {item.total_pembelian?.toLocaleString()}</td>
-                                <td className="px-6 py-4">{item.alamat_tujuan}</td>
-                                <td className="px-6 py-4">{item.metode_pembayaran}</td>
+                                <td className="px-6 py-4">{item.alamat_tujuan || '-'}</td>
+                                <td className="px-6 py-4">
+                                    <span className={`px-2 py-1 rounded-full text-xs font-semibold
+                                        ${item.status_order === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                            item.status_order === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                                                item.status_order === 'shipped' ? 'bg-purple-100 text-purple-800' :
+                                                    item.status_order === 'delivered' ? 'bg-green-100 text-green-800' :
+                                                        'bg-red-100 text-red-800'}`}>
+                                        {item.status_order || 'pending'}
+                                    </span>
+                                </td>
                                 <td className="px-6 py-4">{item.tanggal_transaksi?.slice(0, 10)}</td>
                                 <td className="px-6 py-4 max-w-xs">
                                     <div className="flex gap-2 items-center">

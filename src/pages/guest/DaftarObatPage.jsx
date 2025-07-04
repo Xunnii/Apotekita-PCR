@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Button } from 'antd';
+import { Card, Button, Modal, InputNumber } from 'antd';
 import { supabase } from '../../config/supabase';
 
 function MedicineCard({ id, nama_obat, kategori, harga, gambar }) {
     const navigate = useNavigate();
+    const [showModal, setShowModal] = useState(false);
+    const [qty, setQty] = useState(1);
 
     const handleAddToCart = async (obat) => {
         const { data } = await supabase.auth.getSession();
@@ -14,38 +16,62 @@ function MedicineCard({ id, nama_obat, kategori, harga, gambar }) {
         }
         // Tambahkan ke keranjang (localStorage)
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        cart.push(obat);
+        cart.push({
+            id: obat.id,
+            type: 'obat',
+            nama: obat.nama_obat,
+            harga: obat.harga,
+            gambar: obat.gambar,
+            quantity: obat.quantity || 1
+        });
         localStorage.setItem('cart', JSON.stringify(cart));
     };
 
     return (
-        <Card
-            hoverable
-            cover={<img alt={nama_obat} src={gambar} style={{ height: 200, objectFit: 'cover' }} />}
-            onClick={() => navigate(`/detail-obat/${id}`)}
-            style={{ cursor: 'pointer' }}
-        >
-            <Card.Meta
-                title={nama_obat}
-                description={
-                    <>
-                        <div style={{ color: '#888', marginBottom: 8 }}>{kategori}</div>
-                        <div style={{ color: '#1677ff', fontWeight: 600, marginBottom: 16 }}>
-                            Rp {harga.toLocaleString()}
-                        </div>
-                        <Button
-                            type="primary"
-                            onClick={e => {
-                                e.stopPropagation();
-                                handleAddToCart({ id, nama_obat, kategori, harga, gambar });
-                            }}
-                        >
-                            Tambah ke Keranjang
-                        </Button>
-                    </>
-                }
-            />
-        </Card>
+        <>
+            <Card
+                hoverable
+                cover={<img alt={nama_obat} src={gambar} style={{ height: 200, objectFit: 'cover' }} />}
+                onClick={() => navigate(`/detail-obat/${id}`)}
+                style={{ cursor: 'pointer' }}
+            >
+                <Card.Meta
+                    title={nama_obat}
+                    description={
+                        <>
+                            <div style={{ color: '#888', marginBottom: 8 }}>{kategori}</div>
+                            <div style={{ color: '#1677ff', fontWeight: 600, marginBottom: 16 }}>
+                                Rp {harga.toLocaleString()}
+                            </div>
+                            <Button
+                                type="primary"
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    setShowModal(true);
+                                }}
+                            >
+                                Tambah ke Keranjang
+                            </Button>
+                        </>
+                    }
+                />
+            </Card>
+            <Modal
+                open={showModal}
+                onCancel={() => setShowModal(false)}
+                onOk={() => {
+                    handleAddToCart({ id, nama_obat, harga, gambar, quantity: qty });
+                    setShowModal(false);
+                    setQty(1);
+                }}
+                title="Pilih Jumlah"
+                okText="Tambah"
+                cancelText="Batal"
+            >
+                <div className="mb-2">Jumlah:</div>
+                <InputNumber min={1} value={qty} onChange={setQty} />
+            </Modal>
+        </>
     );
 }
 

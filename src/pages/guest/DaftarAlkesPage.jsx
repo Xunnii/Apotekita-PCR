@@ -14,7 +14,14 @@ function AlkesCard({ id, nama_alkes, harga_alkes, gambar }) {
         }
         // Tambahkan ke keranjang (localStorage)
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        cart.push(alkes);
+        cart.push({
+            id: alkes.id,
+            type: 'alkes',
+            nama: alkes.nama_alkes,
+            harga: alkes.harga_alkes,
+            gambar: alkes.gambar,
+            quantity: 1
+        });
         localStorage.setItem('cart', JSON.stringify(cart));
     };
 
