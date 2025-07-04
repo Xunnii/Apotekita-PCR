@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Card, Button } from 'antd';
 import { supabase } from '../../config/supabase';
 
-function MedicineCard({ id, nama_obat, kategori, harga, gambar }) {
+function AlkesCard({ id, nama_alkes, harga_alkes, gambar }) {
     const navigate = useNavigate();
 
-    const handleAddToCart = async (obat) => {
+    const handleAddToCart = async (alkes) => {
         const { data } = await supabase.auth.getSession();
         if (!data.session) {
             navigate('/login');
@@ -14,30 +14,29 @@ function MedicineCard({ id, nama_obat, kategori, harga, gambar }) {
         }
         // Tambahkan ke keranjang (localStorage)
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        cart.push(obat);
+        cart.push(alkes);
         localStorage.setItem('cart', JSON.stringify(cart));
     };
 
     return (
         <Card
             hoverable
-            cover={<img alt={nama_obat} src={gambar} style={{ height: 200, objectFit: 'cover' }} />}
-            onClick={() => navigate(`/detail-obat/${id}`)}
+            cover={<img alt={nama_alkes} src={gambar} style={{ height: 200, objectFit: 'cover' }} />}
+            onClick={() => navigate(`/detail-alkes/${id}`)}
             style={{ cursor: 'pointer' }}
         >
             <Card.Meta
-                title={nama_obat}
+                title={nama_alkes}
                 description={
                     <>
-                        <div style={{ color: '#888', marginBottom: 8 }}>{kategori}</div>
                         <div style={{ color: '#1677ff', fontWeight: 600, marginBottom: 16 }}>
-                            Rp {harga.toLocaleString()}
+                            Rp {harga_alkes?.toLocaleString()}
                         </div>
                         <Button
                             type="primary"
                             onClick={e => {
                                 e.stopPropagation();
-                                handleAddToCart({ id, nama_obat, kategori, harga, gambar });
+                                handleAddToCart({ id, nama_alkes, harga_alkes, gambar });
                             }}
                         >
                             Tambah ke Keranjang
@@ -49,7 +48,7 @@ function MedicineCard({ id, nama_obat, kategori, harga, gambar }) {
     );
 }
 
-export default function DaftarObatPage() {
+export default function DaftarAlkesPage() {
     const [data, setData] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredData, setFilteredData] = useState([]);
@@ -57,7 +56,7 @@ export default function DaftarObatPage() {
     useEffect(() => {
         // Ambil data dari Supabase
         supabase
-            .from('daftar_obat')
+            .from('alat_kesehatan')
             .select('*')
             .then(({ data, error }) => {
                 if (!error) {
@@ -71,8 +70,7 @@ export default function DaftarObatPage() {
         const filtered = data.filter((item) => {
             const searchLower = searchTerm.toLowerCase();
             return (
-                (item.nama_obat || '').toLowerCase().includes(searchLower) ||
-                (item.kategori || '').toLowerCase().includes(searchLower)
+                (item.nama_alkes || '').toLowerCase().includes(searchLower)
             );
         });
         setFilteredData(filtered);
@@ -83,14 +81,14 @@ export default function DaftarObatPage() {
             <section className="font-Raleway bg-gray-50 min-h-screen py-12 px-4">
                 <div className="max-w-6xl mx-auto">
                     <h2 className="font-RalewayExtra text-[32px] text-2xl font-bold text-blue-800 mb-8 text-center">
-                        Daftar Obat
+                        Daftar Alat Kesehatan
                     </h2>
                     {/* Search Bar */}
                     <div className="mb-8">
                         <div className="relative max-w-xl mx-auto">
                             <input
                                 type="text"
-                                placeholder="Cari obat atau kategori..."
+                                placeholder="Cari alat kesehatan..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -114,17 +112,16 @@ export default function DaftarObatPage() {
                     </div>
                     {/* Results count */}
                     <p className="text-gray-600 text-center mb-6">
-                        {filteredData.length} obat ditemukan
+                        {filteredData.length} alat kesehatan ditemukan
                     </p>
-                    {/* Medicine Grid */}
+                    {/* Alkes Grid */}
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {filteredData.map((item) => (
-                            <MedicineCard
+                            <AlkesCard
                                 key={item.id}
                                 id={item.id}
-                                nama_obat={item.nama_obat}
-                                kategori={item.kategori || ''}
-                                harga={item.harga_obat}
+                                nama_alkes={item.nama_alkes}
+                                harga_alkes={item.harga_alkes}
                                 gambar={item.gambar}
                             />
                         ))}
@@ -133,7 +130,7 @@ export default function DaftarObatPage() {
                     {filteredData.length === 0 && (
                         <div className="text-center py-8">
                             <p className="text-gray-500 text-lg">
-                                Tidak ada obat yang ditemukan
+                                Tidak ada alat kesehatan yang ditemukan
                             </p>
                         </div>
                     )}
@@ -142,3 +139,4 @@ export default function DaftarObatPage() {
         </div>
     );
 }
+

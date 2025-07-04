@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { supabase } from '../../config/supabase';
-import { insertProfile } from '../../services/profileService';
+import { insertPelanggan } from '../../services/profileService';
 
 export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
-    const [form, setForm] = useState({ email: '', phone: '', password: '', nama: '' });
+    const [form, setForm] = useState({ email: '', password: '', nama: '', alamat: '', phone: '' });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -30,22 +30,23 @@ export default function Register() {
             setLoading(false);
             return;
         }
-        // 2. Insert ke tabel profile
+        // 2. Insert ke tabel pelanggan
         const user = data.user || data;
-        const { error: profileError } = await insertProfile({
+        const { error: pelangganError } = await insertPelanggan({
             id: user.id,
             email: form.email,
-            phone: form.phone,
             nama: form.nama,
+            alamat: form.alamat,
+            phone: form.phone,
         });
-        if (profileError) {
-            setError(profileError.message);
+        if (pelangganError) {
+            setError(pelangganError.message);
             setLoading(false);
             return;
         }
         setSuccess('Registrasi berhasil! Silakan cek email untuk verifikasi atau login.');
         setLoading(false);
-        setForm({ email: '', phone: '', password: '', nama: '' });
+        setForm({ email: '', password: '', nama: '', alamat: '', phone: '' });
     };
 
     return (
@@ -87,14 +88,28 @@ export default function Register() {
                 </div>
                 {/* Phone */}
                 <div className="mb-4">
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Nomor Telepon</label>
                     <input
-                        type="text"
+                        type="tel"
                         id="phone"
                         name="phone"
                         className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="08xxxxxxxxxx"
+                        placeholder="08123456789"
                         value={form.phone}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                {/* Alamat */}
+                <div className="mb-4">
+                    <label htmlFor="alamat" className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                    <input
+                        type="text"
+                        id="alamat"
+                        name="alamat"
+                        className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                        placeholder="Alamat Lengkap"
+                        value={form.alamat}
                         onChange={handleChange}
                         required
                     />

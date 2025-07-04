@@ -37,6 +37,16 @@ const menuItems = [
         label: 'Alkes',
     },
     {
+        key: '/admin/pelanggan',
+        icon: <TeamOutlined />,
+        label: 'Pelanggan',
+    },
+    {
+        key: '/admin/riwayat-pembelian',
+        icon: <AppstoreOutlined />,
+        label: 'Riwayat Pembelian',
+    },
+    {
         key: '/admin/konsultasi-dokter',
         icon: <TeamOutlined />,
         label: 'Konsultasi',

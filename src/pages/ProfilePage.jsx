@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../config/supabase';
-import { getProfileById } from '../services/profileService';
+import { getPelangganById } from '../services/profileService';
 
 export default function ProfilePage() {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [form, setForm] = useState({ nama: '', phone: '' });
+    const [form, setForm] = useState({ nama: '', phone: '', alamat: '' });
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -19,14 +19,18 @@ export default function ProfilePage() {
                 setLoading(false);
                 return;
             }
-            const { data: profileData, error: profileError } = await getProfileById(data.user.id);
+            const { data: profileData, error: profileError } = await getPelangganById(data.user.id);
             if (profileError) {
                 setError('Gagal mengambil data profile.');
                 setLoading(false);
                 return;
             }
             setProfile(profileData);
-            setForm({ nama: profileData.nama || '', phone: profileData.phone || '' });
+            setForm({
+                nama: profileData.nama || '',
+                phone: profileData.phone || '',
+                alamat: profileData.alamat || ''
+            });
             setLoading(false);
         };
         fetchProfile();
@@ -43,8 +47,12 @@ export default function ProfilePage() {
         setLoading(true);
         if (!profile) return;
         const { error: updateError } = await supabase
-            .from('profiles')
-            .update({ nama: form.nama, phone: form.phone })
+            .from('pelanggan')
+            .update({
+                nama: form.nama,
+                phone: form.phone,
+                alamat: form.alamat
+            })
             .eq('id', profile.id);
         if (updateError) {
             setError('Gagal update profile: ' + updateError.message);
@@ -53,7 +61,7 @@ export default function ProfilePage() {
         }
         setSuccess('Profile berhasil diupdate!');
         setLoading(false);
-        setProfile({ ...profile, nama: form.nama, phone: form.phone });
+        setProfile({ ...profile, nama: form.nama, phone: form.phone, alamat: form.alamat });
     };
 
     if (loading) return <div className="p-8 text-center">Loading...</div>;
@@ -85,6 +93,17 @@ export default function ProfilePage() {
                         name="phone"
                         className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
                         value={form.phone}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                    <textarea
+                        name="alamat"
+                        rows="3"
+                        className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                        value={form.alamat}
                         onChange={handleChange}
                         required
                     />

@@ -29,6 +29,8 @@ const Register = lazy(() => import('./pages/Auth/Register'));
 const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
+const DaftarAlkesPage = lazy(() => import('./pages/guest/DaftarAlkesPage'));
+const DetailAlkesPage = lazy(() => import('./pages/guest/DetailAlkesPage'));
 
 export default function App() {
   return (
@@ -38,7 +40,9 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/daftar-obat" element={<DaftarObatPage />} />
+          <Route path="/daftar-alkes" element={<DaftarAlkesPage />} />
           <Route path="/detail-obat/:id" element={<DetailObatPage />} />
+          <Route path="/detail-alkes/:id" element={<DetailAlkesPage />} />
           <Route path="/cek-mata" element={<CekMataPage />} />
           <Route path="/konsultasi-dokter" element={<KonsultasiDokter />} />
           <Route path="/apoteker" element={<ApotekerPage />} />

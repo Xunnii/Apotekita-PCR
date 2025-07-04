@@ -1,14 +1,14 @@
 import { supabase } from '../config/supabase';
 
-export async function insertProfile({ id, email, phone, nama }) {
+export async function insertPelanggan({ id, email, nama, alamat, phone }) {
     return await supabase
-        .from('profiles')
-        .insert([{ id, email, phone, nama }]);
+        .from('pelanggan')
+        .insert([{ id, email, nama, alamat, phone, segmentasi: 'silver', total_pembelian: 0 }]);
 }
 
-export async function getProfileById(id) {
+export async function getPelangganById(id) {
     const { data, error } = await supabase
-        .from('profiles')
+        .from('pelanggan')
         .select('*')
         .eq('id', id)
         .single();

@@ -3,7 +3,7 @@ import { Layout, Menu, Button, Badge } from "antd";
 import { AppstoreOutlined, UserOutlined, LoginOutlined, HomeOutlined, MedicineBoxOutlined, EyeOutlined, TeamOutlined, LogoutOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { supabase } from '../config/supabase';
-import { getProfileById } from '../services/profileService';
+import { getPelangganById } from '../services/profileService';
 
 const { Header } = Layout;
 
@@ -18,21 +18,26 @@ const items = [
         key: '/apoteker',
         icon: <TeamOutlined />,
     },
-    {
-        label: 'Cek Mata',
-        key: '/cek-mata',
-        icon: <EyeOutlined />,
-    },
+    // {
+    //     label: 'Cek Mata',
+    //     key: '/cek-mata',
+    //     icon: <EyeOutlined />,
+    // },
     {
         label: 'Daftar Obat',
         key: '/daftar-obat',
         icon: <MedicineBoxOutlined />,
     },
     {
-        label: 'Konsultasi Dokter',
-        key: '/konsultasi-dokter',
+        label: 'Daftar Alat Kesehatan',
+        key: '/daftar-alkes',
         icon: <AppstoreOutlined />,
     },
+    // {
+    //     label: 'Konsultasi Dokter',
+    //     key: '/konsultasi-dokter',
+    //     icon: <AppstoreOutlined />,
+    // },
 ];
 
 export default function AppHeader() {
@@ -57,7 +62,7 @@ export default function AppHeader() {
     useEffect(() => {
         const fetchProfile = async () => {
             if (session && session.user) {
-                const { data } = await getProfileById(session.user.id);
+                const { data } = await getPelangganById(session.user.id);
                 setProfile(data);
             } else {
                 setProfile(null);
