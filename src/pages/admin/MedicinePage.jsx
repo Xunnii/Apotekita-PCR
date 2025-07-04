@@ -8,7 +8,7 @@ import { AiFillDelete, AiOutlineEdit } from "react-icons/ai"
 
 export default function MedicinePage() {
     const [dataForm, setDataForm] = useState({
-        nama: "", stock: "", harga: ""
+        nama_obat: "", stok_obat: "", harga_obat: "", tanggal_kadaluarsa: "", gambar: null
     })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
@@ -18,10 +18,10 @@ export default function MedicinePage() {
 
     // Handle perubahan nilai input form
     const handleChange = (evt) => {
-        const { name, value } = evt.target
+        const { name, value, type, files } = evt.target
         setDataForm({
             ...dataForm,
-            [name]: value,
+            [name]: type === 'file' ? files[0] : value,
         })
     }
 
@@ -53,26 +53,31 @@ export default function MedicinePage() {
             setError("")
             setSuccess("")
 
+            let gambarUrl = null
+            if (dataForm.gambar) {
+                gambarUrl = await medicineService.uploadGambar(dataForm.gambar)
+            }
+
             const payload = {
-                nama: dataForm.nama,
-                stock: parseInt(dataForm.stock), // Pastikan stock adalah integer
-                harga: parseFloat(dataForm.harga), // Pastikan harga adalah float/numeric
+                nama_obat: dataForm.nama_obat,
+                stok_obat: parseInt(dataForm.stok_obat),
+                harga_obat: parseFloat(dataForm.harga_obat),
+                tanggal_kadaluarsa: dataForm.tanggal_kadaluarsa,
+                gambar: gambarUrl || ""
             }
 
             if (editingMedicineId) {
-                // Update obat
                 await medicineService.updateMedicine(editingMedicineId, payload)
                 setSuccess("Obat berhasil diperbarui!")
             } else {
-                // Tambah obat baru
                 await medicineService.createMedicine(payload)
                 setSuccess("Obat berhasil ditambahkan!")
             }
 
-            setDataForm({ nama: "", stock: "", harga: "" }) // Reset form
-            setEditingMedicineId(null) // Hapus mode edit
-            setTimeout(() => setSuccess(""), 3000) // Hapus pesan sukses setelah 3 detik
-            loadMedicines() // Muat ulang data
+            setDataForm({ nama_obat: "", stok_obat: "", harga_obat: "", tanggal_kadaluarsa: "", gambar: null })
+            setEditingMedicineId(null)
+            setTimeout(() => setSuccess(""), 3000)
+            loadMedicines()
         } catch (err) {
             setError(`Terjadi kesalahan: ${err.message}`)
             console.error(err)
@@ -102,9 +107,11 @@ export default function MedicinePage() {
     // Handle edit obat (mengisi form dengan data obat yang dipilih)
     const handleEdit = (medicine) => {
         setDataForm({
-            nama: medicine.nama,
-            stock: medicine.stock.toString(), // Konversi ke string untuk input type="text"
-            harga: medicine.harga.toString(), // Konversi ke string untuk input type="text"
+            nama_obat: medicine.nama_obat,
+            stok_obat: medicine.stok_obat.toString(),
+            harga_obat: medicine.harga_obat.toString(),
+            tanggal_kadaluarsa: medicine.tanggal_kadaluarsa,
+            gambar: null
         })
         setEditingMedicineId(medicine.id)
     }
@@ -129,8 +136,8 @@ export default function MedicinePage() {
                     <form className="space-y-4" onSubmit={handleSubmit}>
                         <input
                             type="text"
-                            name="nama"
-                            value={dataForm.nama}
+                            name="nama_obat"
+                            value={dataForm.nama_obat}
                             placeholder="Nama Obat"
                             onChange={handleChange}
                             required
@@ -141,8 +148,8 @@ export default function MedicinePage() {
                         />
                         <input
                             type="number"
-                            name="stock"
-                            value={dataForm.stock}
+                            name="stok_obat"
+                            value={dataForm.stok_obat}
                             placeholder="Stok"
                             onChange={handleChange}
                             required
@@ -154,13 +161,35 @@ export default function MedicinePage() {
                         />
                         <input
                             type="number"
-                            name="harga"
-                            value={dataForm.harga}
+                            name="harga_obat"
+                            value={dataForm.harga_obat}
                             placeholder="Harga"
                             onChange={handleChange}
                             required
                             min="0"
-                            step="0.01" // Untuk harga desimal
+                            step="0.01"
+                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none
+                                focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all
+                                duration-200"
+                            disabled={loading}
+                        />
+                        <input
+                            type="date"
+                            name="tanggal_kadaluarsa"
+                            value={dataForm.tanggal_kadaluarsa}
+                            placeholder="Tanggal Kadaluarsa"
+                            onChange={handleChange}
+                            required
+                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none
+                                focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all
+                                duration-200"
+                            disabled={loading}
+                        />
+                        <input
+                            type="file"
+                            name="gambar"
+                            accept="image/*"
+                            onChange={handleChange}
                             className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none
                                 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all
                                 duration-200"
@@ -179,7 +208,7 @@ export default function MedicinePage() {
                         {editingMedicineId && (
                             <button
                                 type="button"
-                                onClick={() => { setEditingMedicineId(null); setDataForm({ nama: "", stock: "", harga: "" }); }}
+                                onClick={() => { setEditingMedicineId(null); setDataForm({ nama_obat: "", stok_obat: "", harga_obat: "", tanggal_kadaluarsa: "", gambar: null }); }}
                                 className="ml-4 px-6 py-3 bg-gray-400 hover:bg-gray-500 text-white font-semibold
                                     rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-300
                                     focus:ring-offset-2 transition-all duration-200 shadow-lg"
@@ -201,7 +230,7 @@ export default function MedicinePage() {
                     {!loading && medicines.length === 0 && <EmptyState text="Belum ada data obat" />}
                     {!loading && medicines.length > 0 && (
                         <GenericTable
-                            columns={["#", "Nama Obat", "Stok", "Harga", "Aksi"]}
+                            columns={["#", "Nama Obat", "Stok", "Harga", "Tanggal Kadaluarsa", "Gambar", "Aksi"]}
                             data={medicines}
                             renderRow={(medicine, index) => (
                                 <>
@@ -210,18 +239,28 @@ export default function MedicinePage() {
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="font-semibold text-[var(--color-primary)]">
-                                            {medicine.nama}
+                                            {medicine.nama_obat}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="text-gray-600">
-                                            {medicine.stock}
+                                            {medicine.stok_obat}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="text-gray-600">
-                                            Rp {medicine.harga.toLocaleString()}
+                                            Rp {medicine.harga_obat.toLocaleString()}
                                         </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="text-gray-600">
+                                            {medicine.tanggal_kadaluarsa}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {medicine.gambar && (
+                                            <img src={medicine.gambar} alt={medicine.nama_obat} className="w-16 h-16 object-cover rounded" />
+                                        )}
                                     </td>
                                     <td className="px-6 py-4 max-w-xs">
                                         <div className="flex gap-2 items-center">

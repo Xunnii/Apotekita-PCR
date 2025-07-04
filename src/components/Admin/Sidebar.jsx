@@ -32,6 +32,11 @@ const menuItems = [
         label: 'Medicine',
     },
     {
+        key: '/admin/alkes',
+        icon: <AppstoreOutlined />,
+        label: 'Alkes',
+    },
+    {
         key: '/admin/konsultasi-dokter',
         icon: <TeamOutlined />,
         label: 'Konsultasi',

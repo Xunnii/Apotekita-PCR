@@ -11,6 +11,7 @@ import NotePages from './pages/admin/NoterPage';
 import MedicinePage from './pages/admin/MedicinePage';
 import ConsultationAdminPage from './pages/admin/ConsultationAdminPage';
 import PrivateRoute from './components/PrivateRoute';
+import AlkesPage from './pages/admin/AlkesPage';
 // import AdminLayout from './layout/AdminLayout';
 
 // Lazy load components
@@ -55,9 +56,9 @@ export default function App() {
 
         {/* ADMIN - diproteksi dengan PrivateRoute */}
         <Route path="/admin" element={
-          <PrivateRoute>
-            <AdminLayout />
-          </PrivateRoute>
+          // <PrivateRoute>
+          <AdminLayout />
+          // </PrivateRoute>
         }>
           {/* <Route index element={<BlankPage />} /> */}
           <Route index element={<DashboardPage />} />
@@ -65,6 +66,7 @@ export default function App() {
           <Route path="notes" element={<NotePages />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="medicine" element={<MedicinePage />} />
+          <Route path="alkes" element={<AlkesPage />} />
           <Route path="konsultasi-dokter" element={<ConsultationAdminPage />} />
         </Route>
 

@@ -3,7 +3,7 @@ import { supabase } from '../config/supabase'
 // Fungsi untuk mendapatkan semua data obat
 export const getAllMedicines = async () => {
     const { data, error } = await supabase
-        .from('medicines')
+        .from('daftar_obat')
         .select('*')
 
     if (error) throw error
@@ -13,7 +13,7 @@ export const getAllMedicines = async () => {
 // Fungsi untuk menambahkan obat baru
 export const addMedicine = async (medicineData) => {
     const { data, error } = await supabase
-        .from('medicines')
+        .from('daftar_obat')
         .insert([medicineData])
         .select()
 
@@ -24,7 +24,7 @@ export const addMedicine = async (medicineData) => {
 // Fungsi untuk mengupdate data obat
 export const updateMedicine = async (id, medicineData) => {
     const { data, error } = await supabase
-        .from('medicines')
+        .from('daftar_obat')
         .update(medicineData)
         .eq('id', id)
         .select()
@@ -36,7 +36,7 @@ export const updateMedicine = async (id, medicineData) => {
 // Fungsi untuk menghapus obat
 export const deleteMedicine = async (id) => {
     const { error } = await supabase
-        .from('medicines')
+        .from('daftar_obat')
         .delete()
         .eq('id', id)
 
@@ -46,18 +46,14 @@ export const deleteMedicine = async (id) => {
 // Fungsi untuk mendapatkan statistik
 export const getDashboardStats = async () => {
     const { data: medicines, error: medicinesError } = await supabase
-        .from('medicines')
+        .from('daftar_obat')
         .select('*')
 
-    const { data: orders, error: ordersError } = await supabase
-        .from('orders')
-        .select('*')
-
-    if (medicinesError || ordersError) throw medicinesError || ordersError
+    if (medicinesError) throw medicinesError
 
     return {
         totalMedicines: medicines.length,
-        totalOrders: orders.length,
+        // totalOrders: orders.length, // Hapus jika tidak ada tabel orders
         // Tambahkan statistik lain sesuai kebutuhan
     }
 }
