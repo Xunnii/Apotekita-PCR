@@ -56,7 +56,7 @@ export default function AdminLayout() {
                 {/* Main Area */}
                 <main
                     className={`flex-1 overflow-y-auto pt-[125px] px-4 md:px-6 transition-all duration-300
-                        ${sidebarToggle ? 'pl-[290px]' : 'pl-0'} ${sidebarToggle ? 'lg:pl-[320px]' : 'lg:pl-[120px]'}`}
+                        ${sidebarToggle ? 'pl-[240px]' : 'pl-240'} ${sidebarToggle ? 'lg:pl-[290px]' : 'lg:pl-[120px]'}`}
                 >
                     <div className="mx-auto max-w-7xl">
                         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

@@ -5,8 +5,11 @@ import GenericTable from '../../components/Note/GenericTable'
 import EmptyState from '../../components/Note/EmptyState'
 import LoadingSpinner from '../../components/Note/LoadingSpinner'
 import { AiFillDelete, AiOutlineEdit } from "react-icons/ai"
+import { Table, Form, Input, InputNumber, DatePicker, Button, Upload } from 'antd'
+import dayjs from 'dayjs'
 
 export default function MedicinePage() {
+    const [form] = Form.useForm()
     const [dataForm, setDataForm] = useState({
         nama_obat: "", stok_obat: "", harga_obat: "", tanggal_kadaluarsa: "", gambar: null
     })
@@ -15,6 +18,14 @@ export default function MedicinePage() {
     const [success, setSuccess] = useState("")
     const [medicines, setMedicines] = useState([])
     const [editingMedicineId, setEditingMedicineId] = useState(null) // Untuk melacak ID obat yang sedang diedit
+
+    // Fungsi untuk normalisasi fileList dari Upload antd
+    const normFile = (e) => {
+        if (Array.isArray(e)) {
+            return e;
+        }
+        return e && e.fileList;
+    };
 
     // Handle perubahan nilai input form
     const handleChange = (evt) => {
@@ -46,23 +57,37 @@ export default function MedicinePage() {
     }, [])
 
     // Handle form submission untuk membuat atau mengupdate obat
-    const handleSubmit = async (e) => {
-        e.preventDefault()
+    const handleSubmit = async (values) => {
         try {
             setLoading(true)
             setError("")
             setSuccess("")
 
             let gambarUrl = null
-            if (dataForm.gambar) {
-                gambarUrl = await medicineService.uploadGambar(dataForm.gambar)
+            if (values.gambar && values.gambar.length > 0) {
+                // Ambil file asli dari fileList Ant Design
+                const fileItem = values.gambar[0]
+                const file = fileItem.originFileObj || fileItem
+
+                // Pastikan file adalah File object yang valid
+                if (file instanceof File) {
+                    try {
+                        gambarUrl = await medicineService.uploadGambar(file)
+                    } catch (uploadError) {
+                        setError(`Gagal upload gambar: ${uploadError.message}`)
+                        return
+                    }
+                } else {
+                    setError('File gambar tidak valid')
+                    return
+                }
             }
 
             const payload = {
-                nama_obat: dataForm.nama_obat,
-                stok_obat: parseInt(dataForm.stok_obat),
-                harga_obat: parseFloat(dataForm.harga_obat),
-                tanggal_kadaluarsa: dataForm.tanggal_kadaluarsa,
+                nama_obat: values.nama_obat,
+                stok_obat: parseInt(values.stok_obat),
+                harga_obat: parseFloat(values.harga_obat),
+                tanggal_kadaluarsa: values.tanggal_kadaluarsa ? values.tanggal_kadaluarsa.format('YYYY-MM-DD') : null,
                 gambar: gambarUrl || ""
             }
 
@@ -74,8 +99,13 @@ export default function MedicinePage() {
                 setSuccess("Obat berhasil ditambahkan!")
             }
 
+            // Reset form
             setDataForm({ nama_obat: "", stok_obat: "", harga_obat: "", tanggal_kadaluarsa: "", gambar: null })
             setEditingMedicineId(null)
+
+            // Reset form Ant Design
+            form.resetFields()
+
             setTimeout(() => setSuccess(""), 3000)
             loadMedicines()
         } catch (err) {
@@ -114,10 +144,43 @@ export default function MedicinePage() {
             gambar: null
         })
         setEditingMedicineId(medicine.id)
+
+        // Set form values untuk Ant Design
+        form.setFieldsValue({
+            nama_obat: medicine.nama_obat,
+            stok_obat: medicine.stok_obat,
+            harga_obat: medicine.harga_obat,
+            tanggal_kadaluarsa: medicine.tanggal_kadaluarsa ? dayjs(medicine.tanggal_kadaluarsa) : null,
+            gambar: []
+        })
     }
 
+    // Ganti bagian render tabel daftar obat
+    const columns = [
+        { title: '#', dataIndex: 'index', key: 'index', render: (_, __, i) => i + 1 },
+        { title: 'Nama Obat', dataIndex: 'nama_obat', key: 'nama_obat' },
+        { title: 'Stok', dataIndex: 'stok_obat', key: 'stok_obat' },
+        { title: 'Harga', dataIndex: 'harga_obat', key: 'harga_obat', render: (h) => `Rp ${h.toLocaleString()}` },
+        { title: 'Tanggal Kadaluarsa', dataIndex: 'tanggal_kadaluarsa', key: 'tanggal_kadaluarsa' },
+        { title: 'Gambar', dataIndex: 'gambar', key: 'gambar', render: (g, row) => g && <img src={g} alt={row.nama_obat} className="w-16 h-16 object-cover rounded" /> },
+        {
+            title: 'Aksi',
+            key: 'aksi',
+            render: (_, row) => (
+                <div className="flex gap-2 items-center">
+                    <button onClick={() => handleEdit(row)} disabled={loading} className="p-1 rounded-full hover:bg-blue-100 transition-colors">
+                        <AiOutlineEdit className="text-blue-400 text-2xl hover:text-blue-600" />
+                    </button>
+                    <button onClick={() => handleDelete(row.id)} disabled={loading} className="p-1 rounded-full hover:bg-red-100 transition-colors">
+                        <AiFillDelete className="text-red-400 text-2xl hover:text-red-600" />
+                    </button>
+                </div>
+            )
+        }
+    ];
+
     return (
-        <div className="max-w-6xl mx-auto p-6">
+        <div className="max-w-7xl mx-auto p-2">
             <div className="mb-6">
                 <h2 className="text-3xl font-bold text-gray-800 mb-2">
                     Manajemen Obat
@@ -127,101 +190,92 @@ export default function MedicinePage() {
             {error && <AlertBox type="error">{error}</AlertBox>}
             {success && <AlertBox type="success">{success}</AlertBox>}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-8 mb-7">
                 {/* Form Card */}
                 <div className="bg-white rounded-2xl shadow-lg p-6 h-fit">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
                         {editingMedicineId ? "Edit Obat" : "Tambah Obat Baru"}
                     </h3>
-                    <form className="space-y-4" onSubmit={handleSubmit}>
-                        <input
-                            type="text"
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        onFinish={handleSubmit}
+                        initialValues={{
+                            nama_obat: dataForm.nama_obat,
+                            stok_obat: dataForm.stok_obat,
+                            harga_obat: dataForm.harga_obat,
+                            tanggal_kadaluarsa: dataForm.tanggal_kadaluarsa ? dayjs(dataForm.tanggal_kadaluarsa) : null,
+                            // gambar: dataForm.gambar
+                        }}
+                    >
+                        <Form.Item
+                            label="Nama Obat"
                             name="nama_obat"
-                            value={dataForm.nama_obat}
-                            placeholder="Nama Obat"
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none
-                                focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all
-                                duration-200"
-                            disabled={loading}
-                        />
-                        <input
-                            type="number"
-                            name="stok_obat"
-                            value={dataForm.stok_obat}
-                            placeholder="Stok"
-                            onChange={handleChange}
-                            required
-                            min="0"
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none
-                                focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all
-                                duration-200"
-                            disabled={loading}
-                        />
-                        <input
-                            type="number"
-                            name="harga_obat"
-                            value={dataForm.harga_obat}
-                            placeholder="Harga"
-                            onChange={handleChange}
-                            required
-                            min="0"
-                            step="0.01"
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none
-                                focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all
-                                duration-200"
-                            disabled={loading}
-                        />
-                        <input
-                            type="date"
-                            name="tanggal_kadaluarsa"
-                            value={dataForm.tanggal_kadaluarsa}
-                            placeholder="Tanggal Kadaluarsa"
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none
-                                focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all
-                                duration-200"
-                            disabled={loading}
-                        />
-                        <input
-                            type="file"
-                            name="gambar"
-                            accept="image/*"
-                            onChange={handleChange}
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none
-                                focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all
-                                duration-200"
-                            disabled={loading}
-                        />
-                        <button
-                            type="submit"
-                            className="px-6 py-3 bg-[var(--color-primary)] hover:bg-[var(--color-pudar2)] text-white font-semibold
-                                rounded-2xl focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]
-                                focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed
-                                transition-all duration-200 shadow-lg"
-                            disabled={loading}
+                            rules={[{ required: true, message: 'Nama obat wajib diisi!' }]}
                         >
-                            {loading ? "Mohon Tunggu..." : (editingMedicineId ? "Perbarui Obat" : "Tambah Obat")}
-                        </button>
-                        {editingMedicineId && (
-                            <button
-                                type="button"
-                                onClick={() => { setEditingMedicineId(null); setDataForm({ nama_obat: "", stok_obat: "", harga_obat: "", tanggal_kadaluarsa: "", gambar: null }); }}
-                                className="ml-4 px-6 py-3 bg-gray-400 hover:bg-gray-500 text-white font-semibold
-                                    rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-300
-                                    focus:ring-offset-2 transition-all duration-200 shadow-lg"
+                            <Input disabled={loading} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Stok"
+                            name="stok_obat"
+                            rules={[{ required: true, message: 'Stok wajib diisi!' }]}
+                        >
+                            <InputNumber min={0} style={{ width: '100%' }} disabled={loading} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Harga"
+                            name="harga_obat"
+                            rules={[{ required: true, message: 'Harga wajib diisi!' }]}
+                        >
+                            <InputNumber min={0} style={{ width: '100%' }} disabled={loading} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Tanggal Kadaluarsa"
+                            name="tanggal_kadaluarsa"
+                            rules={[{ required: true, message: 'Tanggal kadaluarsa wajib diisi!' }]}
+                        >
+                            <DatePicker style={{ width: '100%' }} disabled={loading} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Gambar"
+                            name="gambar"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                        >
+                            <Upload
+                                name="gambar"
+                                listType="picture"
+                                beforeUpload={() => false} // prevent auto upload
+                                maxCount={1}
                                 disabled={loading}
+                                accept="image/*"
                             >
-                                Batal Edit
-                            </button>
-                        )}
-                    </form>
+                                <Button>Upload Gambar</Button>
+                            </Upload>
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit" loading={loading}>
+                                {editingMedicineId ? "Perbarui Obat" : "Tambah Obat"}
+                            </Button>
+                            {editingMedicineId && (
+                                <Button
+                                    style={{ marginLeft: 8 }}
+                                    onClick={() => {
+                                        setEditingMedicineId(null);
+                                        setDataForm({ nama_obat: "", stok_obat: "", harga_obat: "", tanggal_kadaluarsa: "", gambar: null });
+                                        form.resetFields();
+                                    }}
+                                    disabled={loading}
+                                >
+                                    Batal Edit
+                                </Button>
+                            )}
+                        </Form.Item>
+                    </Form>
                 </div>
                 {/* Medicine Table */}
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden h-fit">
-                    <div className="px-6 py-4 ">
+                <div className="bg-white rounded-2xl shadow-lg overflow-hidden h-fit p-6 ">
+                    <div className="px-6 py-4  ">
                         <h3 className="text-lg font-semibold">
                             Daftar Obat ({medicines.length})
                         </h3>
@@ -229,59 +283,12 @@ export default function MedicinePage() {
                     {loading && <LoadingSpinner text="Memuat data obat..." />}
                     {!loading && medicines.length === 0 && <EmptyState text="Belum ada data obat" />}
                     {!loading && medicines.length > 0 && (
-                        <GenericTable
-                            columns={["#", "Nama Obat", "Stok", "Harga", "Tanggal Kadaluarsa", "Gambar", "Aksi"]}
-                            data={medicines}
-                            renderRow={(medicine, index) => (
-                                <>
-                                    <td className="px-6 py-4 font-medium text-gray-700">
-                                        {index + 1}.
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="font-semibold text-[var(--color-primary)]">
-                                            {medicine.nama_obat}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="text-gray-600">
-                                            {medicine.stok_obat}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="text-gray-600">
-                                            Rp {medicine.harga_obat.toLocaleString()}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="text-gray-600">
-                                            {medicine.tanggal_kadaluarsa}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {medicine.gambar && (
-                                            <img src={medicine.gambar} alt={medicine.nama_obat} className="w-16 h-16 object-cover rounded" />
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4 max-w-xs">
-                                        <div className="flex gap-2 items-center">
-                                            <button
-                                                onClick={() => handleEdit(medicine)}
-                                                disabled={loading}
-                                                className="p-1 rounded-full hover:bg-blue-100 transition-colors"
-                                            >
-                                                <AiOutlineEdit className="text-blue-400 text-2xl hover:text-blue-600" />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(medicine.id)}
-                                                disabled={loading}
-                                                className="p-1 rounded-full hover:bg-red-100 transition-colors"
-                                            >
-                                                <AiFillDelete className="text-red-400 text-2xl hover:text-red-600" />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </>
-                            )}
+                        <Table
+                            columns={columns}
+                            dataSource={medicines}
+                            rowKey="id"
+                            pagination={false}
+                            size="center"
                         />
                     )}
                 </div>

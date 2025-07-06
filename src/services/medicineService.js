@@ -86,13 +86,24 @@ export const medicineService = {
 
     // Fungsi upload gambar ke Supabase Storage
     async uploadGambar(file) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const filePath = `obat/${fileName}`;
-        const { data, error } = await supabase.storage.from('obat-image').upload(filePath, file);
-        if (error) throw error;
-        // Dapatkan public URL
-        const { data: publicUrlData } = supabase.storage.from('obat-image').getPublicUrl(filePath);
-        return publicUrlData.publicUrl;
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}.${fileExt}`;
+            const filePath = `obat/${fileName}`;
+
+            // Gunakan bucket alkes-image untuk sementara (karena obat-image mungkin belum dibuat)
+            const { data, error } = await supabase.storage.from('alkes-image').upload(filePath, file);
+
+            if (error) {
+                throw error;
+            }
+
+            // Dapatkan public URL
+            const { data: publicUrlData } = supabase.storage.from('alkes-image').getPublicUrl(filePath);
+
+            return publicUrlData.publicUrl;
+        } catch (error) {
+            throw error;
+        }
     }
 }
