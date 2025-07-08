@@ -1,44 +1,44 @@
-import { useState } from "react";
-
-const testimonials = [
-    {
-        name: "Prof. Dignissi Ducimus",
-        quote:
-            "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum dele niti corrupti quos dol",
-        title: "Finibus Bonorum et Malorum Dolor",
-        img: null, // Ganti dengan path gambar jika ada
-    },
-    {
-        name: "Dr. Ipsum Lorem",
-        quote:
-            "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
-        title: "Classical Literature",
-        img: null,
-    },
-    {
-        name: "Ms. Example Name",
-        quote:
-            "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born.",
-        title: "Theory of Ethics",
-        img: null,
-    },
-];
+import { useState, useEffect } from "react";
+import { getApprovedTestimoni } from '../../services/profileService';
 
 export default function Testimonials() {
+    const [testimonials, setTestimonials] = useState([]);
     const [index, setIndex] = useState(0);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchTestimonials = async () => {
+            setLoading(true);
+            const { data, error } = await getApprovedTestimoni();
+            if (!error && data) {
+                setTestimonials(data);
+            }
+            setLoading(false);
+        };
+        fetchTestimonials();
+    }, []);
 
     const prev = () => setIndex((i) => (i === 0 ? testimonials.length - 1 : i - 1));
     const next = () => setIndex((i) => (i === testimonials.length - 1 ? 0 : i + 1));
+
+    if (loading) {
+        return <div className="py-20 text-center">Loading testimonials...</div>;
+    }
+    if (!testimonials.length) {
+        return <div className="py-20 text-center text-gray-500">Belum ada testimoni.</div>;
+    }
+
+    const current = testimonials[index];
+    const pelanggan = current.pelanggan || {};
 
     return (
         <section className="bg-[#f4f4f4] py-20 font-Raleway">
             <div className="container mx-auto px-4">
                 <h2 className="text-5xl font-bold text-[#A63D3D] mb-6 text-center leading-tight">
-                    Passage, And Going The No <br /> Renaissance First Line Is
+                    Testimoni Pelanggan
                 </h2>
                 <p className="text-xl text-black mb-12 max-w-2xl mx-auto text-center">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br />
-                    Duis euismod id magna vel tempor.
+                    Apa kata mereka tentang layanan kami?
                 </p>
                 <div className="flex items-center justify-center">
                     {/* Prev Button */}
@@ -51,12 +51,28 @@ export default function Testimonials() {
                     </button>
                     {/* Testimonial Card */}
                     <div className="bg-white rounded-xl shadow p-4 md:p-12 flex flex-col md:flex-row items-center w-full max-w-5xl">
-                        {/* Placeholder Image */}
-                        <div className="w-24 h-24 md:w-40 md:h-40 bg-gray-300 rounded-md mb-6 md:mb-0 md:mr-10 flex-shrink-0" />
+                        {/* Foto Profil atau Avatar */}
+                        {pelanggan.foto_profil ? (
+                            <img
+                                src={pelanggan.foto_profil}
+                                alt={pelanggan.nama || 'Foto Profil'}
+                                className="w-24 h-24 md:w-40 md:h-40 rounded-full object-cover border mb-6 md:mb-0 md:mr-10 flex-shrink-0"
+                            />
+                        ) : (
+                            <div className="w-24 h-24 md:w-40 md:h-40 bg-gray-300 rounded-full mb-6 md:mb-0 md:mr-10 flex items-center justify-center text-5xl text-gray-400 flex-shrink-0">
+                                <span role="img" aria-label="avatar">👤</span>
+                            </div>
+                        )}
                         <div className="text-left w-full">
-                            <p className="font-bold text-lg md:text-2xl mb-4">{testimonials[index].quote}</p>
-                            <p className="font-bold text-xl mb-1">{testimonials[index].name}</p>
-                            <p className="text-[#A63D3D] font-medium">{testimonials[index].title}</p>
+                            <p className="font-bold text-lg md:text-2xl mb-4">{current.quote}</p>
+                            <div className="flex items-center mb-2">
+                                {/* Rating bintang */}
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <span key={i} className={i < (current.rating || 0) ? 'text-yellow-400 text-xl' : 'text-gray-300 text-xl'}>★</span>
+                                ))}
+                            </div>
+                            <p className="font-bold text-xl mb-1">{pelanggan.nama || '-'}</p>
+                            <p className="text-gray-500 text-sm">{new Date(current.created_at).toLocaleDateString('id-ID')}</p>
                         </div>
                     </div>
                     {/* Next Button */}

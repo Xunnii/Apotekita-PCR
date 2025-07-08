@@ -13,6 +13,9 @@ import ConsultationAdminPage from './pages/admin/ConsultationAdminPage';
 import PrivateRoute from './components/PrivateRoute';
 import AlkesPage from './pages/admin/AlkesPage';
 // import AdminLayout from './layout/AdminLayout';
+import PrediksiStokPage from './pages/admin/PrediksiStokPage';
+import TestimoniForm from './pages/TestimoniForm';
+import TestimoniAdminPage from './pages/admin/TestimoniAdminPage';
 
 // Lazy load components
 const HomePage = lazy(() => import('./pages/guest/HomePage'));
@@ -34,6 +37,7 @@ const DaftarAlkesPage = lazy(() => import('./pages/guest/DaftarAlkesPage'));
 const DetailAlkesPage = lazy(() => import('./pages/guest/DetailAlkesPage'));
 const PelangganPage = lazy(() => import('./pages/admin/PelangganPage'));
 const RiwayatPembelianPage = lazy(() => import('./pages/admin/RiwayatPembelianPage'));
+const SalesReportPage = lazy(() => import('./pages/admin/SalesReportPage'));
 
 export default function App() {
   return (
@@ -64,24 +68,28 @@ export default function App() {
               <OrderSuccessPage />
             </PrivateRoute>
           } />
+          <Route path="/testimoni" element={<TestimoniForm />} />
         </Route>
 
         {/* ADMIN - diproteksi dengan PrivateRoute */}
         <Route path="/admin" element={
-          // <PrivateRoute>
-          <AdminLayout />
-          // </PrivateRoute>
+          <PrivateRoute>
+            <AdminLayout />
+          </PrivateRoute>
         }>
           {/* <Route index element={<BlankPage />} /> */}
           <Route index element={<DashboardPage />} />
           <Route path="blank" element={<BlankPage />} />
           <Route path="notes" element={<NotePages />} />
-          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="" element={<DashboardPage />} />
           <Route path="medicine" element={<MedicinePage />} />
           <Route path="alkes" element={<AlkesPage />} />
           <Route path="pelanggan" element={<PelangganPage />} />
           <Route path="riwayat-pembelian" element={<RiwayatPembelianPage />} />
+          <Route path="laporan-penjualan" element={<SalesReportPage />} />
           <Route path="konsultasi-dokter" element={<ConsultationAdminPage />} />
+          <Route path="prediksi-stok" element={<PrediksiStokPage />} />
+          <Route path="testimoni" element={<TestimoniAdminPage />} />
         </Route>
 
         {/* Rute halaman error - tanpa MainLayout */}

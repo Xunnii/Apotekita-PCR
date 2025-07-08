@@ -31,7 +31,15 @@ function MedicineCard({ id, nama_obat, kategori, harga, gambar }) {
         <>
             <Card
                 hoverable
-                cover={<img alt={nama_obat} src={gambar} style={{ height: 200, objectFit: 'cover' }} />}
+                cover={
+                    <div className="w-full h-52 bg-white flex items-center justify-center overflow-hidden">
+                        <img
+                            alt={nama_obat}
+                            src={gambar}
+                            className="max-w-full max-h-full object-contain mx-auto block"
+                        />
+                    </div>
+                }
                 onClick={() => navigate(`/detail-obat/${id}`)}
                 style={{ cursor: 'pointer' }}
             >

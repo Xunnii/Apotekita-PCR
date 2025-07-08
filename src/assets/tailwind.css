@@ -17,6 +17,13 @@
     src: url(./font/Raleway/Raleway-ExtraBold.ttf)
 }
 
+@font-face {
+    font-family: "Palisade";
+    src: url("/fonts/Palisade.otf") format("opentype");
+    font-weight: bold;
+    font-style: normal;
+}
+
 
 
 
@@ -39,6 +46,7 @@
     --font-Raleway: "Raleway", sans-serif;
     --font-RalewayBold: "RalewayBold", sans-serif;
     --font-RalewayExtra: "RalewayExtra", sans-serif;
+    --font-Palisade: "Palisade", sans-serif;
 }
 
 /* Custom styles untuk Ant Design Menu - Override semua border dan color */

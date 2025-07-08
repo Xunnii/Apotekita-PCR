@@ -100,6 +100,7 @@ export default function CartPage() {
                     alamat_tujuan: alamat,
                     metode_pembayaran: metodePembayaran,
                     status_order: 'pending',
+                    tanggal_transaksi: new Date().toISOString().slice(0, 10),
                 };
                 console.log('payload:', payload);
                 const { error } = await supabase

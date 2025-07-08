@@ -48,8 +48,6 @@ const Header = ({ sidebarToggle, setSidebarToggle, darkMode, setDarkMode }) => {
                                 <button
                                     className="absolute top-1/2 right-2.5 inline-flex -translate-y-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-gray-50 px-[7px] py-[4.5px] text-xs -tracking-[0.2px] text-gray-500"
                                 >
-                                    <span> ⌘ </span>
-                                    <span> K </span>
                                 </button>
                             </div>
                         </form>
@@ -58,56 +56,6 @@ const Header = ({ sidebarToggle, setSidebarToggle, darkMode, setDarkMode }) => {
 
                 <div className={`shadow-theme-md w-full items-center justify-between gap-4 px-5 py-4 lg:flex lg:justify-end lg:px-0 lg:shadow-none ${searchOpen ? 'flex' : 'hidden'}`}>
                     <div className="2xsm:gap-3 flex items-center gap-2">
-                        <button className="hover:text-dark-900 relative flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700">
-                            <BellIcon className="h-5 w-5" />
-                            <span className="absolute top-0.5 right-0 z-1 h-2 w-2 rounded-full bg-orange-400">
-                                <span className="absolute -z-1 inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75"></span>
-                            </span>
-                        </button>
-
-                        <div className="relative">
-                            <button
-                                onClick={() => setDropdownOpen(!dropdownOpen)}
-                                className="flex items-center gap-4"
-                            >
-                                <span className="h-12 w-12 rounded-full">
-                                    <UserCircleIcon className="h-full w-full text-gray-500" />
-                                </span>
-                                <span className="hidden text-left lg:block">
-                                    <span className="block text-sm font-medium text-gray-900">
-                                        Admin User
-                                    </span>
-                                    <span className="block text-xs text-gray-500">Administrator</span>
-                                </span>
-                                <ChevronDownIcon className="hidden sm:block h-3 w-3 fill-current text-gray-500" />
-                            </button>
-
-                            {dropdownOpen && (
-                                <div className="absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default">
-                                    <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5">
-                                        <li>
-                                            <a
-                                                href="#"
-                                                className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
-                                            >
-                                                My Profile
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a
-                                                href="#"
-                                                className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
-                                            >
-                                                Settings
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <button className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
-                                        Log Out
-                                    </button>
-                                </div>
-                            )}
-                        </div>
                     </div>
                 </div>
             </div>

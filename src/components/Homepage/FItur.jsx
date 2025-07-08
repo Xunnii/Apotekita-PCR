@@ -1,57 +1,125 @@
-import { FaStethoscope } from "react-icons/fa";
+import React, { useState } from "react";
+import { Card } from "antd";
+import { AiFillMedicineBox } from "react-icons/ai";
 import { CiStethoscope } from "react-icons/ci";
 import { AiFillEye } from "react-icons/ai";
-// src/components/Features.jsx
-import { AiFillMedicineBox } from "react-icons/ai";
-import { FaFileAlt, FaFlask } from "react-icons/fa";
-import { Link } from "react-router-dom"; // Import Link untuk routing
-import { Card } from 'antd';
+import { Link } from "react-router-dom";
+import { ShoppingBagIcon } from "@heroicons/react/24/outline";
+import { ShoppingCartOutlined } from "@ant-design/icons";
 
-function FeatureCard({ icon, title, desc, link }) {
-    return (
-        <Card
-            hoverable
-            className="rounded-lg text-center transition-transform duration-200 shadow group"
-            style={{ minHeight: 340 }}
-            bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}
-        >
-            <div className="flex items-center justify-center mb-4">
-                <div className="bg-[#A63D3D] text-white rounded-full w-20 h-20 flex items-center justify-center text-4xl mb-2">
-                    {icon}
-                </div>
-            </div>
-            <h3 className="text-2xl font-bold text-[#A63D3D] mb-4">{title}</h3>
-            <p className="text-gray-800 text-lg mb-8">{desc}</p>
-            <Link to={link} className="text-[#C25B3D] font-semibold text-base flex items-center hover:underline transition">
-                Comes froe <span className="ml-2 text-xl">&rarr;</span>
+const tabList = [
+    {
+        key: "obat",
+        tab: (
+            <span>
+                <AiFillMedicineBox className="inline mr-2" />
+                Obat
+            </span>
+        ),
+    },
+    {
+        key: "konsultasi",
+        tab: (
+            <span>
+                <CiStethoscope className="inline mr-2" />
+                Konsultasi
+            </span>
+        ),
+    },
+    {
+        key: "cek-mata",
+        tab: (
+            <span>
+                <AiFillEye className="inline mr-2" />
+                Admin
+            </span>
+        ),
+    },
+    {
+        key: "keranjang",
+        tab: (
+            <span>
+                <ShoppingCartOutlined className="inline mr-2" />
+                Keranjang
+            </span>
+        ),
+    },
+];
+
+const contentList = {
+    obat: (
+        <div className="text-center">
+            <h3 className="text-xl font-bold mb-2">Daftar Obat</h3>
+            <p>Informasi dan daftar obat yang tersedia di apotek kami</p>
+            <Link
+                to="/daftar-obat"
+                className="inline-block mt-4 px-6 py-2 bg-[#A63D3D] text-white rounded shadow hover:bg-[#922c2c] transition"
+            >
+                Lihat Daftar Obat
             </Link>
-        </Card>
-    );
-}
+        </div>
+    ),
+    konsultasi: (
+        <div className="text-center">
+            <h3 className="text-xl font-bold mb-2">Konsultasi Dokter</h3>
+            <p>Layanan konsultasi dengan dokter dan apoteker profesional.</p>
+            <Link
+                to="/daftar-alkes"
+                className="inline-block mt-4 px-6 py-2 bg-[#A63D3D] text-white rounded shadow hover:bg-[#922c2c] transition"
+            >
+                Lihat daftar Alat Kesehatan
+            </Link>
+        </div>
+    ),
+    "cek-mata": (
+        <div className="text-center">
+            <h3 className="text-xl font-bold mb-2">admin</h3>
+            <p>testing Tombol Admin</p>
+            <Link
+                to="/admin/"
+                className="inline-block mt-4 px-6 py-2 bg-[#A63D3D] text-white rounded shadow hover:bg-[#922c2c] transition"
+            >
+                Masuk ke admin
+            </Link>
+        </div>
+    ),
+    keranjang: (
+        <div className="text-center">
+            <h3 className="text-xl font-bold mb-2">Keranjang</h3>
+            <p>Halaman keranjang belanja Anda.</p>
+            <Link
+                to="/keranjang"
+                className="inline-block mt-4 px-6 py-2 bg-[#A63D3D] text-white rounded shadow hover:bg-[#922c2c] transition"
+            >
+                Lihat Keranjang
+            </Link>
+        </div>
+    ),
+};
 
-export default function Features() {
+const FeaturesWithTabs = () => {
+    const [activeTabKey, setActiveTabKey] = useState("obat");
+
+    const onTabChange = (key) => {
+        setActiveTabKey(key);
+    };
+
     return (
         <section className="bg-white py-16 font-Raleway">
-            <div className="container mx-auto px-4 grid md:grid-cols-3 gap-12">
-                <FeatureCard
-                    icon={<AiFillMedicineBox />}
-                    title="Typesetting"
-                    desc="Lorem ipume dolor sit amet, consectetur adipiscing elit. Duis euismod id magna vel tempor."
-                    link="/daftar-obat"
-                />
-                <FeatureCard
-                    icon={<CiStethoscope />}
-                    title="Readabli"
-                    desc="Lorem ipume dolor sit amet, consectetur adipiscing elit. Duis euismod id magna vel tempor."
-                    link="/konsultasi-dokter"
-                />
-                <FeatureCard
-                    icon={<AiFillEye />}
-                    title="Sometimes The"
-                    desc="Lorem ipume dolor sit amet, consectetur adipiscing elit. Duis euismod id magna vel tempor."
-                    link="/cek-mata"
-                />
+            <div className="container mx-auto px-4 flex justify-center">
+                <Card
+                    style={{ width: 1431 }}
+                    tabList={tabList}
+                    activeTabKey={activeTabKey}
+                    onTabChange={onTabChange}
+                    headStyle={{ textAlign: "center" }}
+                    title={<span className="block text-5xl font-Palisade text-primary">Fitur Apotek</span>}
+                >
+                    {contentList[activeTabKey]}
+                </Card>
             </div>
         </section>
     );
-}
+};
+
+export default FeaturesWithTabs;

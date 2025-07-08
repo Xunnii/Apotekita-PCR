@@ -1,28 +1,19 @@
 import React, { useState, useEffect } from "react";
 import AlertBox from '../../components/Note/AlertBox';
-import GenericTable from '../../components/Note/GenericTable';
 import EmptyState from '../../components/Note/EmptyState';
 import LoadingSpinner from '../../components/Note/LoadingSpinner';
 import { AiFillDelete, AiOutlineEdit } from "react-icons/ai";
 import { supabase } from '../../config/supabase';
+import { Form, Input, InputNumber, Select, Button, Table } from 'antd';
 
 export default function PelangganPage() {
-    const [dataForm, setDataForm] = useState({
-        nama: "", email: "", alamat: "", phone: "", segmentasi: "silver"
-    });
+    const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [pelanggan, setPelanggan] = useState([]);
     const [editingId, setEditingId] = useState(null);
-
-    const handleChange = (evt) => {
-        const { name, value } = evt.target;
-        setDataForm({
-            ...dataForm,
-            [name]: value,
-        });
-    };
+    const [showForm, setShowForm] = useState(false);
 
     const loadPelanggan = async () => {
         try {
@@ -46,8 +37,7 @@ export default function PelangganPage() {
         loadPelanggan();
     }, []);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (values) => {
         try {
             setLoading(true);
             setError("");
@@ -56,7 +46,7 @@ export default function PelangganPage() {
                 // Update
                 const { error } = await supabase
                     .from('pelanggan')
-                    .update(dataForm)
+                    .update(values)
                     .eq('id', editingId);
                 if (error) throw error;
                 setSuccess("Pelanggan berhasil diperbarui!");
@@ -64,12 +54,13 @@ export default function PelangganPage() {
                 // Insert
                 const { error } = await supabase
                     .from('pelanggan')
-                    .insert([dataForm]);
+                    .insert([values]);
                 if (error) throw error;
                 setSuccess("Pelanggan berhasil ditambahkan!");
             }
-            setDataForm({ nama: "", email: "", alamat: "", phone: "", segmentasi: "silver" });
+            form.resetFields();
             setEditingId(null);
+            setShowForm(false);
             setTimeout(() => setSuccess(""), 3000);
             loadPelanggan();
         } catch (err) {
@@ -102,15 +93,47 @@ export default function PelangganPage() {
     };
 
     const handleEdit = (item) => {
-        setDataForm({
+        setEditingId(item.id);
+        setShowForm(true);
+        form.setFieldsValue({
             nama: item.nama,
             email: item.email,
             alamat: item.alamat,
             phone: item.phone || "",
             segmentasi: item.segmentasi || "silver"
         });
-        setEditingId(item.id);
     };
+
+    const columns = [
+        { title: '#', dataIndex: 'index', key: 'index', render: (_, __, i) => i + 1 },
+        { title: 'Nama', dataIndex: 'nama', key: 'nama' },
+        { title: 'Email', dataIndex: 'email', key: 'email' },
+        { title: 'Phone', dataIndex: 'phone', key: 'phone', render: (p) => p || '-' },
+        { title: 'Alamat', dataIndex: 'alamat', key: 'alamat' },
+        { title: 'Segmentasi', dataIndex: 'segmentasi', key: 'segmentasi' },
+        {
+            title: 'Aksi',
+            key: 'aksi',
+            render: (_, row) => (
+                <div className="flex gap-2 items-center">
+                    <button
+                        onClick={() => handleEdit(row)}
+                        disabled={loading}
+                        className="p-1 rounded-full hover:bg-blue-100 transition-colors"
+                    >
+                        <AiOutlineEdit className="text-blue-400 text-2xl hover:text-blue-600" />
+                    </button>
+                    <button
+                        onClick={() => handleDelete(row.id)}
+                        disabled={loading}
+                        className="p-1 rounded-full hover:bg-red-100 transition-colors"
+                    >
+                        <AiFillDelete className="text-red-400 text-2xl hover:text-red-600" />
+                    </button>
+                </div>
+            )
+        }
+    ];
 
     return (
         <div className="max-w-4xl mx-auto p-6">
@@ -122,83 +145,79 @@ export default function PelangganPage() {
             {error && <AlertBox type="error">{error}</AlertBox>}
             {success && <AlertBox type="success">{success}</AlertBox>}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
                 <div className="bg-white rounded-2xl shadow-lg p-6 h-fit">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                        {editingId ? "Edit Pelanggan" : "Tambah Pelanggan Baru"}
-                    </h3>
-                    <form className="space-y-4" onSubmit={handleSubmit}>
-                        <input
-                            type="text"
-                            name="nama"
-                            value={dataForm.nama}
-                            placeholder="Nama"
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
-                        />
-                        <input
-                            type="email"
-                            name="email"
-                            value={dataForm.email}
-                            placeholder="Email"
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
-                        />
-                        <input
-                            type="text"
-                            name="alamat"
-                            value={dataForm.alamat}
-                            placeholder="Alamat"
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
-                        />
-                        <input
-                            type="tel"
-                            name="phone"
-                            value={dataForm.phone}
-                            placeholder="Nomor Telepon"
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
-                        />
-                        <select
-                            name="segmentasi"
-                            value={dataForm.segmentasi}
-                            onChange={handleChange}
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
-                        >
-                            <option value="silver">Silver</option>
-                            <option value="gold">Gold</option>
-                            <option value="platinum">Platinum</option>
-                        </select>
-                        <button
-                            type="submit"
-                            className="px-6 py-3 bg-[var(--color-primary)] hover:bg-[var(--color-pudar2)] text-white font-semibold rounded-2xl"
-                            disabled={loading}
-                        >
-                            {loading ? "Mohon Tunggu..." : (editingId ? "Perbarui Pelanggan" : "Tambah Pelanggan")}
-                        </button>
-                        {editingId && (
-                            <button
-                                type="button"
-                                onClick={() => { setEditingId(null); setDataForm({ nama: "", email: "", alamat: "", phone: "", segmentasi: "silver" }); }}
-                                className="ml-4 px-6 py-3 bg-gray-400 hover:bg-gray-500 text-white font-semibold rounded-2xl"
-                                disabled={loading}
+                    {!(showForm || editingId) && (
+                        <Button type="primary" onClick={() => { setShowForm(true); form.resetFields(); setEditingId(null); }}>
+                            Tambah Pelanggan
+                        </Button>
+                    )}
+                    {(showForm || editingId) && (
+                        <>
+                            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                                {editingId ? "Edit Pelanggan" : "Tambah Pelanggan Baru"}
+                            </h3>
+                            <Form
+                                form={form}
+                                layout="vertical"
+                                onFinish={handleSubmit}
+                                initialValues={{ segmentasi: 'silver' }}
                             >
-                                Batal Edit
-                            </button>
-                        )}
-                    </form>
+                                <Form.Item
+                                    label="Nama"
+                                    name="nama"
+                                    rules={[{ required: true, message: 'Nama wajib diisi!' }]}
+                                >
+                                    <Input disabled={loading} />
+                                </Form.Item>
+                                <Form.Item
+                                    label="Email"
+                                    name="email"
+                                    rules={[{ required: true, message: 'Email wajib diisi!' }, { type: 'email', message: 'Email tidak valid!' }]}
+                                >
+                                    <Input disabled={loading} />
+                                </Form.Item>
+                                <Form.Item
+                                    label="Alamat"
+                                    name="alamat"
+                                    rules={[{ required: true, message: 'Alamat wajib diisi!' }]}
+                                >
+                                    <Input disabled={loading} />
+                                </Form.Item>
+                                <Form.Item
+                                    label="Nomor Telepon"
+                                    name="phone"
+                                    rules={[{ required: true, message: 'Nomor telepon wajib diisi!' }]}
+                                >
+                                    <Input disabled={loading} />
+                                </Form.Item>
+                                <Form.Item
+                                    label="Segmentasi"
+                                    name="segmentasi"
+                                >
+                                    <Select disabled={loading}>
+                                        <Select.Option value="silver">Silver</Select.Option>
+                                        <Select.Option value="gold">Gold</Select.Option>
+                                        <Select.Option value="platinum">Platinum</Select.Option>
+                                    </Select>
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit" loading={loading}>
+                                        {editingId ? "Perbarui Pelanggan" : "Tambah Pelanggan"}
+                                    </Button>
+                                    <Button
+                                        style={{ marginLeft: 8 }}
+                                        onClick={() => { setShowForm(false); setEditingId(null); form.resetFields(); }}
+                                        disabled={loading}
+                                    >
+                                        Batal
+                                    </Button>
+                                </Form.Item>
+                            </Form>
+                        </>
+                    )}
                 </div>
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden h-fit">
+                <div className="bg-white rounded-2xl shadow-lg overflow-hidden h-fit p-6">
                     <div className="px-6 py-4 ">
                         <h3 className="text-lg font-semibold">
                             Daftar Pelanggan ({pelanggan.length})
@@ -207,59 +226,12 @@ export default function PelangganPage() {
                     {loading && <LoadingSpinner text="Memuat data pelanggan..." />}
                     {!loading && pelanggan.length === 0 && <EmptyState text="Belum ada data pelanggan" />}
                     {!loading && pelanggan.length > 0 && (
-                        <GenericTable
-                            columns={["#", "Nama", "Email", "Phone", "Alamat", "Segmentasi", "Aksi"]}
-                            data={pelanggan}
-                            renderRow={(item, index) => (
-                                <>
-                                    <td className="px-6 py-4 font-medium text-gray-700">
-                                        {index + 1}.
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="font-semibold text-[var(--color-primary)]">
-                                            {item.nama}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="text-gray-600">
-                                            {item.email}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="text-gray-600">
-                                            {item.phone || '-'}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="text-gray-600">
-                                            {item.alamat}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="text-gray-600">
-                                            {item.segmentasi}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 max-w-xs">
-                                        <div className="flex gap-2 items-center">
-                                            <button
-                                                onClick={() => handleEdit(item)}
-                                                disabled={loading}
-                                                className="p-1 rounded-full hover:bg-blue-100 transition-colors"
-                                            >
-                                                <AiOutlineEdit className="text-blue-400 text-2xl hover:text-blue-600" />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(item.id)}
-                                                disabled={loading}
-                                                className="p-1 rounded-full hover:bg-red-100 transition-colors"
-                                            >
-                                                <AiFillDelete className="text-red-400 text-2xl hover:text-red-600" />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </>
-                            )}
+                        <Table
+                            columns={columns}
+                            dataSource={pelanggan}
+                            rowKey="id"
+                            pagination={false}
+                            size="middle"
                         />
                     )}
                 </div>

@@ -55,14 +55,14 @@ export default function AdminLayout() {
 
                 {/* Main Area */}
                 <main
-                    className={`flex-1 overflow-y-auto pt-[125px] px-4 md:px-6 transition-all duration-300
-                        ${sidebarToggle ? 'pl-[240px]' : 'pl-240'} ${sidebarToggle ? 'lg:pl-[290px]' : 'lg:pl-[120px]'}`}
+                    className={`flex-2 overflow-y-auto pt-[125px] px-1 md:px-1 transition-all duration-300
+                        ${sidebarToggle ? 'pl-[240px]' : 'pl-240'} ${sidebarToggle ? 'lg:pl-[270px]' : 'lg:pl-[120px]'}`}
                 >
                     <div className="mx-auto max-w-7xl">
-                        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                            <h2 className="text-title-md2 font-bold text-primary dark:text-primary">
-                                {getPageName()}
-                            </h2>
+                        <div className="pl-2 pr-3 mb-1 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <h1 className="text-title-md2 font-bold text-primary dark:text-primary">
+                                {/* {getPageName()} */}
+                            </h1>
                             <Breadcrumb pageName={getPageName()} />
                         </div>
                         <Outlet />

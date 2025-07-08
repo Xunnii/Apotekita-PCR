@@ -28,7 +28,15 @@ function AlkesCard({ id, nama_alkes, harga_alkes, gambar }) {
     return (
         <Card
             hoverable
-            cover={<img alt={nama_alkes} src={gambar} style={{ height: 200, objectFit: 'cover' }} />}
+            cover={
+                <div className="w-full h-52 bg-white flex items-center justify-center overflow-hidden">
+                    <img
+                        alt={nama_alkes}
+                        src={gambar}
+                        className="max-w-full max-h-full object-contain mx-auto block"
+                    />
+                </div>
+            }
             onClick={() => navigate(`/detail-alkes/${id}`)}
             style={{ cursor: 'pointer' }}
         >

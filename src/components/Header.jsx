@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Button, Badge } from "antd";
-import { AppstoreOutlined, UserOutlined, LoginOutlined, HomeOutlined, MedicineBoxOutlined, EyeOutlined, TeamOutlined, LogoutOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import { Layout, Menu, Button, Badge, Dropdown, Avatar, Drawer } from "antd";
+import {
+    AppstoreOutlined,
+    UserOutlined,
+    LoginOutlined,
+    HomeOutlined,
+    MedicineBoxOutlined,
+    EyeOutlined,
+    TeamOutlined,
+    LogoutOutlined,
+    ShoppingCartOutlined,
+    SettingOutlined,
+    ProfileOutlined,
+    MenuOutlined,
+    StarOutlined
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { supabase } from '../config/supabase';
 import { getPelangganById } from '../services/profileService';
@@ -13,16 +27,16 @@ const items = [
         key: '/',
         icon: <HomeOutlined />,
     },
-    {
-        label: 'Apoteker',
-        key: '/apoteker',
-        icon: <TeamOutlined />,
-    },
     // {
-    //     label: 'Cek Mata',
-    //     key: '/cek-mata',
-    //     icon: <EyeOutlined />,
+    //     label: 'Apoteker',
+    //     key: '/apoteker',
+    //     icon: <TeamOutlined />,
     // },
+    // // {
+    // //     label: 'Cek Mata',
+    // //     key: '/cek-mata',
+    // //     icon: <EyeOutlined />,
+    // // },
     {
         label: 'Daftar Obat',
         key: '/daftar-obat',
@@ -31,6 +45,21 @@ const items = [
     {
         label: 'Daftar Alat Kesehatan',
         key: '/daftar-alkes',
+        icon: <AppstoreOutlined />,
+    },
+    {
+        label: 'FAQ',
+        key: '/',
+        icon: <AppstoreOutlined />,
+    },
+    {
+        label: 'Artikel',
+        key: '/',
+        icon: <AppstoreOutlined />,
+    },
+    {
+        label: 'Outlet Kami',
+        key: '/',
         icon: <AppstoreOutlined />,
     },
     // {
@@ -45,6 +74,7 @@ export default function AppHeader() {
     const [session, setSession] = useState(null);
     const [profile, setProfile] = useState(null);
     const [cartCount, setCartCount] = useState(0);
+    const [drawerOpen, setDrawerOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -93,68 +123,234 @@ export default function AppHeader() {
         navigate('/login');
     };
 
+    // Dropdown items untuk user yang sudah login
+    const userMenuItems = [
+        {
+            key: 'profile',
+            icon: <ProfileOutlined />,
+            label: 'Profile',
+            onClick: () => navigate('/profile')
+        },
+        {
+            key: 'settings',
+            icon: <SettingOutlined />,
+            label: 'Settings',
+            onClick: () => navigate('/profile')
+        },
+        {
+            type: 'divider'
+        },
+        {
+            key: 'keranjang',
+            icon: <ShoppingCartOutlined />,
+            label: 'Keranjang',
+            onClick: () => navigate('/keranjang')
+        },
+        {
+            key: 'testimoni',
+            icon: <StarOutlined />,
+            label: 'Beri Testimoni',
+            onClick: () => navigate('/testimoni')
+        },
+        {
+            key: 'logout',
+            icon: <LogoutOutlined />,
+            label: 'Logout',
+            onClick: handleLogout
+        }
+    ];
+
+    // Dropdown items untuk user yang belum login
+    const guestMenuItems = [
+        {
+            key: 'login',
+            icon: <LoginOutlined />,
+            label: 'Sign In',
+            onClick: () => navigate('/login')
+        },
+        {
+            key: 'register',
+            icon: <UserOutlined />,
+            label: 'Sign Up',
+            onClick: () => navigate('/register')
+        }
+    ];
+
+    // Mobile menu items (gabungkan navigation dan auth)
+    const mobileMenuItems = [
+        ...items,
+        { type: 'divider' },
+        ...(session ? userMenuItems : guestMenuItems)
+    ];
+
+    const handleMobileMenuClick = (e) => {
+        setCurrent(e.key);
+        setDrawerOpen(false); // Tutup drawer setelah klik
+        navigate(e.key);
+    };
+
     return (
         <Header
             style={{
-                background: "#fff",
-                boxShadow: "0 2px 8px #f0f1f2",
-                padding: "0px 40px",
+                background: "rgba(255, 255, 255, 0.95)",
+                backdropFilter: "blur(10px)",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                padding: "0px 20px",
                 display: "flex",
                 alignItems: "center",
                 zIndex: 50,
+                position: "sticky",
+                top: 0,
+                borderBottom: "1px solid rgba(0, 0, 0, 0.06)",
             }}
             className="font-Raleway"
         >
-            {/* Logo */}
-            <div className="mr-20 flex items-center h-full">
-                <img src="\img\LogoAK\ak_panjang_nobg.png" alt="Logo" style={{ height: 139 }} />
-            </div>
-            {/* Menu */}
-            <Menu
-                onClick={onClick}
-                selectedKeys={[current]}
-                mode="horizontal"
-                items={items}
-                style={{
-                    flex: 1,
-                    fontSize: 18,
-                    borderBottom: "none",
-                    display: "flex",
-                    justifyContent: "center"
-                }}
-            />
-            {/* Cart Icon */}
-            <div className="flex items-center space-x-2 ml-4">
-                <Badge count={cartCount} size="small" offset={[0, 6]}>
-                    <Button
-                        shape="circle"
-                        icon={<ShoppingCartOutlined style={{ fontSize: 20 }} />}
-                        onClick={() => navigate('/keranjang')}
-                        style={{ border: 'none', background: 'none', boxShadow: 'none' }}
-                        aria-label="Keranjang"
-                    />
-                </Badge>
+            {/* Mobile Header: Hamburger, Logo, Profile */}
+            <div className="flex w-full items-center justify-between md:hidden">
+                {/* Hamburger */}
+                <Button
+                    icon={<MenuOutlined />}
+                    style={{ border: 'none', background: 'none', boxShadow: 'none' }}
+                    aria-label="Menu"
+                    onClick={() => setDrawerOpen(true)}
+                />
+                {/* Logo */}
+                <img
+                    src="/img/LogoAK/ak_panjang_nobg.png"
+                    alt="Logo"
+                    className="h-14 md:h-28 w-auto"
+                />
+                {/* Profile/Guest */}
                 {session ? (
-                    <>
-                        {profile && (
-                            <span className="font-semibold text-gray-700 mr-2">{profile.nama}</span>
-                        )}
-                        <Button icon={<LogoutOutlined />} type="primary" danger onClick={handleLogout}>
-                            Logout
-                        </Button>
-                    </>
+                    <Dropdown
+                        menu={{ items: userMenuItems }}
+                        placement="bottomRight"
+                        arrow
+                        trigger={['click']}
+                    >
+                        <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-2 py-2 rounded-lg transition-colors">
+                            <Avatar
+                                size={32}
+                                src={profile?.foto_profil || null}
+                                icon={!profile?.foto_profil && <UserOutlined />}
+                                style={{
+                                    backgroundColor: profile?.foto_profil ? undefined : (profile?.nama ? '#1890ff' : '#d9d9d9'),
+                                    color: profile?.foto_profil ? undefined : (profile?.nama ? '#fff' : '#666')
+                                }}
+                            />
+                        </div>
+                    </Dropdown>
                 ) : (
-                    <>
-                        <Button icon={<LoginOutlined />} type="text" onClick={() => navigate('/login')}>
-                            Sign In
-                        </Button>
-                        <Button icon={<UserOutlined />}
-                            type="primary" onClick={() => navigate('/register')}>
-                            Sign Up
-                        </Button>
-                    </>
+                    <Dropdown
+                        menu={{ items: guestMenuItems }}
+                        placement="bottomRight"
+                        arrow
+                        trigger={['click']}
+                    >
+                        <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-2 py-2 rounded-lg transition-colors">
+                            <UserOutlined style={{ fontSize: 24, color: '#666' }} />
+                        </div>
+                    </Dropdown>
                 )}
             </div>
+            {/* Desktop Header: Logo, Menu, Cart, Profile */}
+            <>
+                <div className="mr-8 md:mr-20 items-center h-full hidden md:flex">
+                    <img
+                        src="/img/LogoAK/ak_panjang_nobg.png"
+                        alt="Logo"
+                        className="h-14 md:h-30"
+                    />
+                </div>
+                {/* Menu Desktop */}
+                <div className="hidden md:flex flex-1">
+                    <Menu
+                        onClick={onClick}
+                        selectedKeys={[current]}
+                        mode="horizontal"
+                        items={items}
+                        style={{
+                            flex: 1,
+                            fontSize: 16,
+                            borderBottom: "none",
+                            display: "flex",
+                            justifyContent: "center"
+                        }}
+                    />
+                </div>
+                {/* Cart Icon & Profile Desktop */}
+                <div className="items-center space-x-4 ml-4 hidden md:flex">
+                    <Badge count={cartCount} size="small" offset={[0, 6]}>
+                        <Button
+                            shape="circle"
+                            icon={<ShoppingCartOutlined style={{ fontSize: 20 }} />}
+                            onClick={() => navigate('/keranjang')}
+                            style={{ border: 'none', background: 'none', boxShadow: 'none' }}
+                            aria-label="Keranjang"
+                        />
+                    </Badge>
+                    {session ? (
+                        <Dropdown
+                            menu={{ items: userMenuItems }}
+                            placement="bottomRight"
+                            arrow
+                            trigger={['click']}
+                        >
+                            <div className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 px-4 py-3 rounded-lg transition-colors">
+                                <Avatar
+                                    size={45}
+                                    src={profile?.foto_profil || null}
+                                    icon={!profile?.foto_profil && <UserOutlined />}
+                                    style={{
+                                        backgroundColor: profile?.foto_profil ? undefined : (profile?.nama ? '#1890ff' : '#d9d9d9'),
+                                        color: profile?.foto_profil ? undefined : (profile?.nama ? '#fff' : '#666')
+                                    }}
+                                />
+                                <div className="ml-2">
+                                    <div className="text-sm font-medium text-gray-700">
+                                        {profile?.nama || 'User'}
+                                    </div>
+                                </div>
+                            </div>
+                        </Dropdown>
+                    ) : (
+                        <Dropdown
+                            menu={{ items: guestMenuItems }}
+                            placement="bottomRight"
+                            arrow
+                            trigger={['click']}
+                        >
+                            <div className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 px-4 py-3 rounded-lg transition-colors">
+                                <div>
+                                    <div className="text-sm font-medium text-gray-700">
+                                        Guest
+                                    </div>
+                                    <div className="text-xs text-gray-500">
+                                        Sign in to continue
+                                    </div>
+                                </div>
+                            </div>
+                        </Dropdown>
+                    )}
+                </div>
+            </>
+            {/* Drawer untuk Mobile Menu */}
+            <Drawer
+                title={<span className="font-bold text-lg">Menu</span>}
+                placement="left"
+                onClose={() => setDrawerOpen(false)}
+                open={drawerOpen}
+                className="md:hidden"
+                bodyStyle={{ padding: 0 }}
+            >
+                <Menu
+                    onClick={handleMobileMenuClick}
+                    selectedKeys={[current]}
+                    mode="vertical"
+                    items={mobileMenuItems}
+                    style={{ border: 'none' }}
+                />
+            </Drawer>
         </Header>
     );
 }

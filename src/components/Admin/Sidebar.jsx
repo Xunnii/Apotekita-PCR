@@ -5,22 +5,29 @@ import {
     EditOutlined,
     AppstoreOutlined,
     MedicineBoxOutlined,
-    TeamOutlined
+    TeamOutlined,
+    BarChartOutlined,
+    StarOutlined
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
 
 const menuItems = [
     {
-        key: '/admin/dashboard',
+        key: '/admin/',
         icon: <HomeOutlined />,
         label: 'Dashboard',
     },
     {
-        key: '/admin/notes',
+        key: '/admin/prediksi-stok',
         icon: <EditOutlined />,
-        label: 'Notes',
+        label: 'Prediksi Stok Obat',
     },
+    // {
+    //     key: '/admin/notes',
+    //     icon: <EditOutlined />,
+    //     label: 'Notes',
+    // },
     {
         key: '/admin/blank',
         icon: <AppstoreOutlined />,
@@ -47,9 +54,19 @@ const menuItems = [
         label: 'Riwayat Pembelian',
     },
     {
-        key: '/admin/konsultasi-dokter',
-        icon: <TeamOutlined />,
-        label: 'Konsultasi',
+        key: '/admin/laporan-penjualan',
+        icon: <BarChartOutlined />,
+        label: 'Laporan Penjualan',
+    },
+    // {
+    //     key: '/admin/konsultasi-dokter',
+    //     icon: <TeamOutlined />,
+    //     label: 'Konsultasi',
+    // },
+    {
+        key: '/admin/testimoni',
+        icon: <StarOutlined />,
+        label: 'Testimoni',
     },
 ];
 

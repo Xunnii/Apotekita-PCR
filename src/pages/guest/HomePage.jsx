@@ -12,8 +12,8 @@ export default function HomePage() {
         <div>
             <HeroSection />
             <AboutSection />
-            {/* <NewsSection /> */}
             <Features />
+            <NewsSection />
             {/* <CallToAction /> */}
             <TeamSection />
             <Testimonials />

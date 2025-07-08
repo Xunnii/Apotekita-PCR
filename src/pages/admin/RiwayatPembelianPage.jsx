@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import AlertBox from '../../components/Note/AlertBox';
-import GenericTable from '../../components/Note/GenericTable';
 import EmptyState from '../../components/Note/EmptyState';
 import LoadingSpinner from '../../components/Note/LoadingSpinner';
 import { supabase } from '../../config/supabase';
 import { AiFillDelete, AiOutlineEdit, AiOutlinePlus } from "react-icons/ai";
+import { Form, Input, InputNumber, Select, Button, DatePicker, Table } from 'antd';
+import dayjs from 'dayjs';
 
 export default function RiwayatPembelianPage() {
+    const [form] = Form.useForm();
     const [riwayat, setRiwayat] = useState([]);
     const [pelangganList, setPelangganList] = useState([]);
     const [obatList, setObatList] = useState([]);
@@ -16,19 +18,6 @@ export default function RiwayatPembelianPage() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [editingId, setEditingId] = useState(null);
-    const [dataForm, setDataForm] = useState({
-        pelanggan_id: "",
-        produk_tipe: "obat",
-        produk_id: "",
-        nama_produk: "",
-        harga_produk: 0,
-        jumlah: 1,
-        total_pembelian: 0,
-        alamat_tujuan: "",
-        metode_pembayaran: "",
-        status: "pending",
-        tanggal_transaksi: new Date().toISOString().slice(0, 10)
-    });
 
     // Load data dropdown
     useEffect(() => {
@@ -62,51 +51,49 @@ export default function RiwayatPembelianPage() {
     };
     useEffect(() => { loadRiwayat(); }, []);
 
-    // Handle form change
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        let newForm = { ...dataForm, [name]: value };
-        // Jika produk_tipe atau produk_id berubah, update nama_produk & harga_produk
-        if (name === 'produk_tipe') {
-            newForm.produk_id = "";
-            newForm.nama_produk = "";
-            newForm.harga_produk = 0;
+    // Handle form change (produk_id, produk_tipe, jumlah)
+    const handleFormChange = (changed, all) => {
+        let newValues = { ...all, ...changed };
+        // Update nama_produk & harga_produk
+        if (changed.produk_tipe) {
+            newValues.produk_id = undefined;
+            newValues.nama_produk = '';
+            newValues.harga_produk = 0;
         }
-        if (name === 'produk_id' || name === 'produk_tipe') {
+        if (changed.produk_id || changed.produk_tipe) {
             let produk = null;
-            if (newForm.produk_tipe === 'obat') {
-                produk = obatList.find(o => o.id === parseInt(newForm.produk_id));
-                newForm.nama_produk = produk ? produk.nama_obat : "";
-                newForm.harga_produk = produk ? produk.harga_obat : 0;
+            if (newValues.produk_tipe === 'obat') {
+                produk = obatList.find(o => o.id === newValues.produk_id);
+                newValues.nama_produk = produk ? produk.nama_obat : '';
+                newValues.harga_produk = produk ? produk.harga_obat : 0;
             } else {
-                produk = alkesList.find(a => a.id === parseInt(newForm.produk_id));
-                newForm.nama_produk = produk ? produk.nama_alkes : "";
-                newForm.harga_produk = produk ? produk.harga_alkes : 0;
+                produk = alkesList.find(a => a.id === newValues.produk_id);
+                newValues.nama_produk = produk ? produk.nama_alkes : '';
+                newValues.harga_produk = produk ? produk.harga_alkes : 0;
             }
         }
         // Update total pembelian
-        if (name === 'jumlah' || name === 'produk_id' || name === 'produk_tipe') {
-            newForm.total_pembelian = (parseInt(newForm.harga_produk) || 0) * (parseInt(newForm.jumlah) || 0);
+        if (changed.jumlah || changed.produk_id || changed.produk_tipe) {
+            newValues.total_pembelian = (parseInt(newValues.harga_produk) || 0) * (parseInt(newValues.jumlah) || 0);
         }
-        setDataForm(newForm);
+        form.setFieldsValue(newValues);
     };
 
     // Handle submit
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (values) => {
         try {
             setLoading(true);
             setError("");
             setSuccess("");
-            if (!dataForm.pelanggan_id) {
+            if (!values.pelanggan_id) {
                 setError("Pelanggan wajib dipilih!");
                 setLoading(false);
                 return;
             }
-            // Buat payload tanpa status jika kolom belum ada
-            const payload = { ...dataForm };
-            delete payload.status; // Hapus status sementara
-
+            const payload = {
+                ...values,
+                tanggal_transaksi: values.tanggal_transaksi ? values.tanggal_transaksi.format('YYYY-MM-DD') : undefined
+            };
             if (editingId) {
                 // Update
                 const { error } = await supabase
@@ -125,7 +112,7 @@ export default function RiwayatPembelianPage() {
             }
             setShowForm(false);
             setEditingId(null);
-            setDataForm({ pelanggan_id: "", produk_tipe: "obat", produk_id: "", nama_produk: "", harga_produk: 0, jumlah: 1, total_pembelian: 0, alamat_tujuan: "", metode_pembayaran: "", status: "pending", tanggal_transaksi: new Date().toISOString().slice(0, 10) });
+            form.resetFields();
             setTimeout(() => setSuccess(""), 3000);
             loadRiwayat();
         } catch (err) {
@@ -140,7 +127,7 @@ export default function RiwayatPembelianPage() {
     const handleEdit = (item) => {
         setShowForm(true);
         setEditingId(item.id);
-        setDataForm({
+        form.setFieldsValue({
             pelanggan_id: item.pelanggan_id,
             produk_tipe: item.produk_tipe,
             produk_id: item.produk_id,
@@ -150,7 +137,8 @@ export default function RiwayatPembelianPage() {
             total_pembelian: item.total_pembelian,
             alamat_tujuan: item.alamat_tujuan,
             metode_pembayaran: item.metode_pembayaran,
-            tanggal_transaksi: item.tanggal_transaksi?.slice(0, 10)
+            status_order: item.status_order || 'pending',
+            tanggal_transaksi: item.tanggal_transaksi ? dayjs(item.tanggal_transaksi) : dayjs()
         });
     };
 
@@ -173,173 +161,178 @@ export default function RiwayatPembelianPage() {
         }
     };
 
+    const columns = [
+        { title: '#', dataIndex: 'index', key: 'index', render: (_, __, i) => i + 1 },
+        { title: 'Pelanggan', dataIndex: ['pelanggan', 'nama'], key: 'pelanggan', render: (v, row) => row.pelanggan?.nama || '-' },
+        { title: 'Produk', dataIndex: 'nama_produk', key: 'nama_produk' },
+        { title: 'Tipe', dataIndex: 'produk_tipe', key: 'produk_tipe' },
+        { title: 'Harga', dataIndex: 'harga_produk', key: 'harga_produk', render: (h) => `Rp ${h?.toLocaleString()}` },
+        { title: 'Jumlah', dataIndex: 'jumlah', key: 'jumlah' },
+        { title: 'Total', dataIndex: 'total_pembelian', key: 'total_pembelian', render: (t) => `Rp ${t?.toLocaleString()}` },
+        { title: 'Alamat', dataIndex: 'alamat_tujuan', key: 'alamat_tujuan' },
+        {
+            title: 'Status', dataIndex: 'status_order', key: 'status_order', render: (s) => (
+                <span className={`px-2 py-1 rounded-full text-xs font-semibold
+                ${s === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                        s === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                            s === 'shipped' ? 'bg-purple-100 text-purple-800' :
+                                s === 'delivered' ? 'bg-green-100 text-green-800' :
+                                    'bg-red-100 text-red-800'}`}>{s || 'pending'}</span>
+            )
+        },
+        { title: 'Tanggal', dataIndex: 'tanggal_transaksi', key: 'tanggal_transaksi', render: (t) => t?.slice(0, 10) },
+        {
+            title: 'Aksi',
+            key: 'aksi',
+            render: (_, row) => (
+                <div className="flex gap-2 items-center">
+                    <button
+                        onClick={() => handleEdit(row)}
+                        disabled={loading}
+                        className="p-1 rounded-full hover:bg-blue-100 transition-colors"
+                    >
+                        <AiOutlineEdit className="text-blue-400 text-2xl hover:text-blue-600" />
+                    </button>
+                    <button
+                        onClick={() => handleDelete(row.id)}
+                        disabled={loading}
+                        className="p-1 rounded-full hover:bg-red-100 transition-colors"
+                    >
+                        <AiFillDelete className="text-red-400 text-2xl hover:text-red-600" />
+                    </button>
+                </div>
+            )
+        }
+    ];
+
     return (
         <div className="max-w-6xl mx-auto p-6">
             <div className="mb-6 flex items-center justify-between">
                 <h2 className="text-3xl font-bold text-gray-800 mb-2">
                     Riwayat Pembelian
                 </h2>
-                <button
-                    className="flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg shadow hover:bg-[var(--color-pudar2)]"
-                    onClick={() => { setShowForm(!showForm); setEditingId(null); setDataForm({ pelanggan_id: "", produk_tipe: "obat", produk_id: "", nama_produk: "", harga_produk: 0, jumlah: 1, total_pembelian: 0, alamat_tujuan: "", metode_pembayaran: "", tanggal_transaksi: new Date().toISOString().slice(0, 10) }); }}
+                <Button
+                    type="primary"
+                    icon={<AiOutlinePlus />}
+                    onClick={() => { setShowForm(!showForm); setEditingId(null); form.resetFields(); }}
                 >
-                    <AiOutlinePlus /> {showForm ? "Tutup Form" : "Tambah Riwayat"}
-                </button>
+                    {showForm ? "Tutup Form" : "Tambah Riwayat"}
+                </Button>
             </div>
             {error && <AlertBox type="error">{error}</AlertBox>}
             {success && <AlertBox type="success">{success}</AlertBox>}
             {showForm && (
                 <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-                    <form className="space-y-4" onSubmit={handleSubmit}>
-
-                        <select
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        onFinish={handleSubmit}
+                        initialValues={{ produk_tipe: 'obat', jumlah: 1, status_order: 'pending', tanggal_transaksi: dayjs() }}
+                        onValuesChange={handleFormChange}
+                    >
+                        <Form.Item
+                            label="Pelanggan"
                             name="pelanggan_id"
-                            value={dataForm.pelanggan_id}
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
+                            rules={[{ required: true, message: 'Pelanggan wajib dipilih!' }]}
                         >
-                            <option value="">Pilih Pelanggan</option>
-                            {pelangganList.map(p => (
-                                <option key={p.id} value={p.id}>{p.nama}</option>
-                            ))}
-                        </select>
-                        <select
+                            <Select placeholder="Pilih Pelanggan" disabled={loading} showSearch optionFilterProp="children">
+                                {pelangganList.map(p => (
+                                    <Select.Option key={p.id} value={p.id}>{p.nama}</Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            label="Tipe Produk"
                             name="produk_tipe"
-                            value={dataForm.produk_tipe}
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
+                            rules={[{ required: true, message: 'Tipe produk wajib dipilih!' }]}
                         >
-                            <option value="obat">Obat</option>
-                            <option value="alkes">Alat Kesehatan</option>
-                        </select>
-                        <select
+                            <Select disabled={loading}>
+                                <Select.Option value="obat">Obat</Select.Option>
+                                <Select.Option value="alkes">Alat Kesehatan</Select.Option>
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            label="Produk"
                             name="produk_id"
-                            value={dataForm.produk_id}
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
+                            rules={[{ required: true, message: 'Produk wajib dipilih!' }]}
                         >
-                            <option value="">Pilih Produk</option>
-                            {dataForm.produk_tipe === 'obat' ? (
-                                obatList.map(o => (
-                                    <option key={o.id} value={o.id}>{o.nama_obat} (Rp {o.harga_obat})</option>
-                                ))
-                            ) : (
-                                alkesList.map(a => (
-                                    <option key={a.id} value={a.id}>{a.nama_alkes} (Rp {a.harga_alkes})</option>
-                                ))
-                            )}
-                        </select>
-                        <input
-                            type="number"
+                            <Select placeholder="Pilih Produk" disabled={loading} showSearch optionFilterProp="children">
+                                {form.getFieldValue('produk_tipe') === 'obat' ? (
+                                    obatList.map(o => (
+                                        <Select.Option key={o.id} value={o.id}>{o.nama_obat} (Rp {o.harga_obat})</Select.Option>
+                                    ))
+                                ) : (
+                                    alkesList.map(a => (
+                                        <Select.Option key={a.id} value={a.id}>{a.nama_alkes} (Rp {a.harga_alkes})</Select.Option>
+                                    ))
+                                )}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            label="Jumlah"
                             name="jumlah"
-                            value={dataForm.jumlah}
-                            placeholder="Jumlah"
-                            onChange={handleChange}
-                            required
-                            min="1"
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
-                        />
-                        <input
-                            type="text"
+                            rules={[{ required: true, message: 'Jumlah wajib diisi!' }]}
+                        >
+                            <InputNumber min={1} style={{ width: '100%' }} disabled={loading} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Alamat Tujuan"
                             name="alamat_tujuan"
-                            value={dataForm.alamat_tujuan}
-                            placeholder="Alamat Tujuan"
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
-                        />
-                        <input
-                            type="text"
+                            rules={[{ required: true, message: 'Alamat tujuan wajib diisi!' }]}
+                        >
+                            <Input disabled={loading} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Metode Pembayaran"
                             name="metode_pembayaran"
-                            value={dataForm.metode_pembayaran}
-                            placeholder="Metode Pembayaran"
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
-                        />
-                        <select
+                            rules={[{ required: true, message: 'Metode pembayaran wajib diisi!' }]}
+                        >
+                            <Input disabled={loading} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Status"
                             name="status_order"
-                            value={dataForm.status_order}
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
                         >
-                            <option value="pending">Pending</option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="shipped">Shipped</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
-
-                        <input
-                            type="date"
+                            <Select disabled={loading}>
+                                <Select.Option value="pending">Pending</Select.Option>
+                                <Select.Option value="confirmed">Confirmed</Select.Option>
+                                <Select.Option value="shipped">Shipped</Select.Option>
+                                <Select.Option value="delivered">Delivered</Select.Option>
+                                <Select.Option value="cancelled">Cancelled</Select.Option>
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            label="Tanggal Transaksi"
                             name="tanggal_transaksi"
-                            value={dataForm.tanggal_transaksi}
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
-                        />
-                        <div className="flex gap-4">
-                            <input
-                                type="text"
-                                name="nama_produk"
-                                value={dataForm.nama_produk}
-                                placeholder="Nama Produk"
-                                readOnly
-                                className="w-full p-3 bg-gray-100 rounded-2xl border border-gray-200"
-                                disabled
-                            />
-                            <input
-                                type="number"
-                                name="harga_produk"
-                                value={dataForm.harga_produk}
-                                placeholder="Harga Produk"
-                                readOnly
-                                className="w-full p-3 bg-gray-100 rounded-2xl border border-gray-200"
-                                disabled
-                            />
-                            <input
-                                type="number"
-                                name="total_pembelian"
-                                value={dataForm.total_pembelian}
-                                placeholder="Total Pembelian"
-                                readOnly
-                                className="w-full p-3 bg-gray-100 rounded-2xl border border-gray-200"
-                                disabled
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            className="px-6 py-3 bg-[var(--color-primary)] hover:bg-[var(--color-pudar2)] text-white font-semibold rounded-2xl"
-                            disabled={loading}
+                            rules={[{ required: true, message: 'Tanggal transaksi wajib diisi!' }]}
                         >
-                            {loading ? "Mohon Tunggu..." : (editingId ? "Perbarui Riwayat" : "Tambah Riwayat")}
-                        </button>
-                        {editingId && (
-                            <button
-                                type="button"
-                                onClick={() => { setEditingId(null); setShowForm(false); setDataForm({ pelanggan_id: "", produk_tipe: "obat", produk_id: "", nama_produk: "", harga_produk: 0, jumlah: 1, total_pembelian: 0, alamat_tujuan: "", metode_pembayaran: "", tanggal_transaksi: new Date().toISOString().slice(0, 10) }); }}
-                                className="ml-4 px-6 py-3 bg-gray-400 hover:bg-gray-500 text-white font-semibold rounded-2xl"
+                            <DatePicker style={{ width: '100%' }} disabled={loading} />
+                        </Form.Item>
+                        <Form.Item label="Nama Produk" name="nama_produk">
+                            <Input disabled readOnly />
+                        </Form.Item>
+                        <Form.Item label="Harga Produk" name="harga_produk">
+                            <InputNumber style={{ width: '100%' }} disabled readOnly />
+                        </Form.Item>
+                        <Form.Item label="Total Pembelian" name="total_pembelian">
+                            <InputNumber style={{ width: '100%' }} disabled readOnly />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit" loading={loading}>
+                                {editingId ? "Perbarui Riwayat" : "Tambah Riwayat"}
+                            </Button>
+                            <Button
+                                style={{ marginLeft: 8 }}
+                                onClick={() => { setEditingId(null); setShowForm(false); form.resetFields(); }}
                                 disabled={loading}
                             >
-                                Batal Edit
-                            </button>
-                        )}
-                    </form>
+                                Batal
+                            </Button>
+                        </Form.Item>
+                    </Form>
                 </div>
             )}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden h-fit">
+            <div className="bg-white rounded-2xl shadow-lg overflow-x-auto w-full h-fit p-6">
                 <div className="px-6 py-4 ">
                     <h3 className="text-lg font-semibold">
                         Daftar Riwayat Pembelian ({riwayat.length})
@@ -348,50 +341,19 @@ export default function RiwayatPembelianPage() {
                 {loading && <LoadingSpinner text="Memuat data riwayat..." />}
                 {!loading && riwayat.length === 0 && <EmptyState text="Belum ada riwayat pembelian" />}
                 {!loading && riwayat.length > 0 && (
-                    <GenericTable
-                        columns={["#", "Pelanggan", "Produk", "Tipe", "Harga", "Jumlah", "Total", "Alamat", "Status", "Tanggal", "Aksi"]}
-                        data={riwayat}
-                        renderRow={(item, index) => (
-                            <>
-                                <td className="px-6 py-4 font-medium text-gray-700">{index + 1}.</td>
-                                <td className="px-6 py-4">{item.pelanggan?.nama || '-'}</td>
-                                <td className="px-6 py-4">{item.nama_produk}</td>
-                                <td className="px-6 py-4">{item.produk_tipe}</td>
-                                <td className="px-6 py-4">Rp {item.harga_produk?.toLocaleString()}</td>
-                                <td className="px-6 py-4">{item.jumlah}</td>
-                                <td className="px-6 py-4">Rp {item.total_pembelian?.toLocaleString()}</td>
-                                <td className="px-6 py-4">{item.alamat_tujuan || '-'}</td>
-                                <td className="px-6 py-4">
-                                    <span className={`px-2 py-1 rounded-full text-xs font-semibold
-                                        ${item.status_order === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                            item.status_order === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                                                item.status_order === 'shipped' ? 'bg-purple-100 text-purple-800' :
-                                                    item.status_order === 'delivered' ? 'bg-green-100 text-green-800' :
-                                                        'bg-red-100 text-red-800'}`}>
-                                        {item.status_order || 'pending'}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4">{item.tanggal_transaksi?.slice(0, 10)}</td>
-                                <td className="px-6 py-4 max-w-xs">
-                                    <div className="flex gap-2 items-center">
-                                        <button
-                                            onClick={() => handleEdit(item)}
-                                            disabled={loading}
-                                            className="p-1 rounded-full hover:bg-blue-100 transition-colors"
-                                        >
-                                            <AiOutlineEdit className="text-blue-400 text-2xl hover:text-blue-600" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(item.id)}
-                                            disabled={loading}
-                                            className="p-1 rounded-full hover:bg-red-100 transition-colors"
-                                        >
-                                            <AiFillDelete className="text-red-400 text-2xl hover:text-red-600" />
-                                        </button>
-                                    </div>
-                                </td>
-                            </>
-                        )}
+                    <Table
+                        columns={columns}
+                        dataSource={riwayat}
+                        rowKey="id"
+                        size="middle"
+                        scroll={{ x: 'max-content' }}
+                        style={{ width: '100%' }}
+                        pagination={{
+                            pageSize: 10,
+                            showSizeChanger: true,
+                            pageSizeOptions: [5, 10, 20, 50],
+                            showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} data`
+                        }}
                     />
                 )}
             </div>

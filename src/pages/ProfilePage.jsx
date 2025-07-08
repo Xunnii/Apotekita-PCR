@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../config/supabase';
-import { getPelangganById } from '../services/profileService';
+import { getPelangganById, updatePelangganProfile, uploadProfilePhoto } from '../services/profileService';
 import { Card, Table, Tag, Button } from 'antd';
 
 export default function ProfilePage() {
@@ -11,6 +11,8 @@ export default function ProfilePage() {
     const [form, setForm] = useState({ nama: '', phone: '', alamat: '' });
     const [orders, setOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(false);
+    const [photoUploading, setPhotoUploading] = useState(false);
+    const [photoError, setPhotoError] = useState('');
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -88,6 +90,52 @@ export default function ProfilePage() {
         setSuccess('Profile berhasil diupdate!');
         setLoading(false);
         setProfile({ ...profile, nama: form.nama, phone: form.phone, alamat: form.alamat });
+    };
+
+    const handlePhotoChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file || !profile) return;
+        setPhotoUploading(true);
+        setPhotoError('');
+        try {
+            const { url, error } = await uploadProfilePhoto(profile.id, file);
+            if (error) throw error;
+            // Update pelanggan table
+            const { error: updateError } = await updatePelangganProfile(profile.id, {
+                nama: profile.nama,
+                alamat: profile.alamat,
+                phone: profile.phone,
+                foto_profil: url
+            });
+            if (updateError) throw updateError;
+            setProfile({ ...profile, foto_profil: url });
+            setSuccess('Foto profil berhasil diupdate!');
+        } catch (err) {
+            setPhotoError('Gagal upload foto: ' + (err.message || err.error_description || 'Unknown error'));
+        } finally {
+            setPhotoUploading(false);
+        }
+    };
+
+    const handleRemovePhoto = async () => {
+        if (!profile) return;
+        setPhotoUploading(true);
+        setPhotoError('');
+        try {
+            const { error: updateError } = await updatePelangganProfile(profile.id, {
+                nama: profile.nama,
+                alamat: profile.alamat,
+                phone: profile.phone,
+                foto_profil: null
+            });
+            if (updateError) throw updateError;
+            setProfile({ ...profile, foto_profil: null });
+            setSuccess('Foto profil dihapus.');
+        } catch (err) {
+            setPhotoError('Gagal hapus foto: ' + (err.message || err.error_description || 'Unknown error'));
+        } finally {
+            setPhotoUploading(false);
+        }
     };
 
     const getStatusColor = (status) => {
@@ -171,6 +219,43 @@ export default function ProfilePage() {
             {/* Profile Section */}
             <div className="max-w-md mx-auto bg-white rounded-xl shadow p-8 mb-8">
                 <h2 className="text-2xl font-bold mb-4 text-center">Profile</h2>
+                {/* Foto Profil */}
+                <div className="flex flex-col items-center mb-4">
+                    {profile.foto_profil ? (
+                        <img
+                            src={profile.foto_profil}
+                            alt="Foto Profil"
+                            className="w-24 h-24 rounded-full object-cover border mb-2"
+                        />
+                    ) : (
+                        <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center mb-2 text-gray-400">
+                            <span className="text-4xl">👤</span>
+                        </div>
+                    )}
+                    <div className="flex gap-2">
+                        <label className="bg-primary text-white px-3 py-1 rounded cursor-pointer text-sm hover:bg-pudar2">
+                            {photoUploading ? 'Uploading...' : 'Ganti Foto'}
+                            <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handlePhotoChange}
+                                disabled={photoUploading}
+                            />
+                        </label>
+                        {profile.foto_profil && (
+                            <button
+                                type="button"
+                                className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+                                onClick={handleRemovePhoto}
+                                disabled={photoUploading}
+                            >
+                                Hapus Foto
+                            </button>
+                        )}
+                    </div>
+                    {photoError && <div className="text-red-600 text-xs mt-1">{photoError}</div>}
+                </div>
                 <div className="mb-4">
                     <div className="text-gray-600 text-sm mb-1">Email</div>
                     <div className="font-semibold">{profile.email}</div>

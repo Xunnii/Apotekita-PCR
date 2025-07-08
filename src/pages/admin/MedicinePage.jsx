@@ -65,21 +65,13 @@ export default function MedicinePage() {
 
             let gambarUrl = null
             if (values.gambar && values.gambar.length > 0) {
-                // Ambil file asli dari fileList Ant Design
                 const fileItem = values.gambar[0]
-                const file = fileItem.originFileObj || fileItem
-
-                // Pastikan file adalah File object yang valid
-                if (file instanceof File) {
-                    try {
-                        gambarUrl = await medicineService.uploadGambar(file)
-                    } catch (uploadError) {
-                        setError(`Gagal upload gambar: ${uploadError.message}`)
-                        return
-                    }
-                } else {
-                    setError('File gambar tidak valid')
-                    return
+                if (fileItem.originFileObj) {
+                    // User upload gambar baru
+                    gambarUrl = await medicineService.uploadGambar(fileItem.originFileObj)
+                } else if (fileItem.url) {
+                    // User tidak upload gambar baru, pakai gambar lama
+                    gambarUrl = fileItem.url
                 }
             }
 
@@ -151,7 +143,14 @@ export default function MedicinePage() {
             stok_obat: medicine.stok_obat,
             harga_obat: medicine.harga_obat,
             tanggal_kadaluarsa: medicine.tanggal_kadaluarsa ? dayjs(medicine.tanggal_kadaluarsa) : null,
-            gambar: []
+            gambar: medicine.gambar
+                ? [{
+                    uid: '-1',
+                    name: medicine.gambar.split('/').pop(),
+                    status: 'done',
+                    url: medicine.gambar,
+                }]
+                : []
         })
     }
 
@@ -191,6 +190,25 @@ export default function MedicinePage() {
             {success && <AlertBox type="success">{success}</AlertBox>}
 
             <div className="grid grid-cols-1 md:grid-cols-1 gap-8 mb-7">
+                {/* Medicine Table */}
+                <div className="bg-white rounded-2xl shadow-lg overflow-hidden h-fit p-6 ">
+                    <div className="px-6 py-4  ">
+                        <h3 className="text-lg font-semibold">
+                            Daftar Obat ({medicines.length})
+                        </h3>
+                    </div>
+                    {loading && <LoadingSpinner text="Memuat data obat..." />}
+                    {!loading && medicines.length === 0 && <EmptyState text="Belum ada data obat" />}
+                    {!loading && medicines.length > 0 && (
+                        <Table
+                            columns={columns}
+                            dataSource={medicines}
+                            rowKey="id"
+                            pagination={false}
+                            size="center"
+                        />
+                    )}
+                </div>
                 {/* Form Card */}
                 <div className="bg-white rounded-2xl shadow-lg p-6 h-fit">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
@@ -273,25 +291,7 @@ export default function MedicinePage() {
                         </Form.Item>
                     </Form>
                 </div>
-                {/* Medicine Table */}
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden h-fit p-6 ">
-                    <div className="px-6 py-4  ">
-                        <h3 className="text-lg font-semibold">
-                            Daftar Obat ({medicines.length})
-                        </h3>
-                    </div>
-                    {loading && <LoadingSpinner text="Memuat data obat..." />}
-                    {!loading && medicines.length === 0 && <EmptyState text="Belum ada data obat" />}
-                    {!loading && medicines.length > 0 && (
-                        <Table
-                            columns={columns}
-                            dataSource={medicines}
-                            rowKey="id"
-                            pagination={false}
-                            size="center"
-                        />
-                    )}
-                </div>
+
             </div>
         </div>
     )

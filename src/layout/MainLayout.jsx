@@ -6,13 +6,13 @@ import BreadCrumb from "../components/BreadCrumb";
 
 export default function MainLayout() {
     return (
-        <div className="flex flex-col min-h-screen bg-gray-100">
+        <div className="flex flex-col min-h-screen bg-white-50">
             <Header />
             {/* <PageHeader /> */}
-            <div className=" font-semibold  p-4"> {/* Tambahkan wrapper dan styling di sini */}
+            <div className=" font-semibold  mr-1 ml-4 mb-1 mt-2"> {/* Tambahkan wrapper dan styling di sini */}
                 <BreadCrumb />
             </div>
-            <div className="flex-1 p-4">
+            <div className="flex-1 p-2">
 
                 <Outlet />
             </div>

@@ -1,29 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { alkesService } from '../../services/alkesService';
 import AlertBox from '../../components/Note/AlertBox';
-import GenericTable from '../../components/Note/GenericTable';
 import EmptyState from '../../components/Note/EmptyState';
 import LoadingSpinner from '../../components/Note/LoadingSpinner';
 import { AiFillDelete, AiOutlineEdit } from "react-icons/ai";
+import { Table, Form, Input, InputNumber, Button, Upload, Card } from 'antd';
 
 export default function AlkesPage() {
-    const [dataForm, setDataForm] = useState({
-        nama_alkes: "", stok_alkes: "", harga_alkes: "", gambar: null
-    });
+    const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [alkes, setAlkes] = useState([]);
     const [editingAlkesId, setEditingAlkesId] = useState(null);
 
-    const handleChange = (evt) => {
-        const { name, value, type, files } = evt.target;
-        setDataForm({
-            ...dataForm,
-            [name]: type === 'file' ? files[0] : value,
-        });
+    // Fungsi untuk normalisasi fileList dari Upload antd
+    const normFile = (e) => {
+        if (Array.isArray(e)) {
+            return e;
+        }
+        return e && e.fileList;
     };
 
+    // Memuat data alkes
     const loadAlkes = async () => {
         try {
             setLoading(true);
@@ -42,22 +41,29 @@ export default function AlkesPage() {
         loadAlkes();
     }, []);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    // Handle form submission untuk membuat atau mengupdate alkes
+    const handleSubmit = async (values) => {
         try {
             setLoading(true);
             setError("");
             setSuccess("");
 
             let gambarUrl = null;
-            if (dataForm.gambar) {
-                gambarUrl = await alkesService.uploadGambar(dataForm.gambar);
+            if (values.gambar && values.gambar.length > 0) {
+                const fileItem = values.gambar[0];
+                if (fileItem.originFileObj) {
+                    // User upload gambar baru
+                    gambarUrl = await alkesService.uploadGambar(fileItem.originFileObj);
+                } else if (fileItem.url) {
+                    // User tidak upload gambar baru, pakai gambar lama
+                    gambarUrl = fileItem.url;
+                }
             }
 
             const payload = {
-                nama_alkes: dataForm.nama_alkes,
-                stok_alkes: parseInt(dataForm.stok_alkes),
-                harga_alkes: parseFloat(dataForm.harga_alkes),
+                nama_alkes: values.nama_alkes,
+                stok_alkes: parseInt(values.stok_alkes),
+                harga_alkes: parseFloat(values.harga_alkes),
                 gambar: gambarUrl || ""
             };
 
@@ -69,8 +75,8 @@ export default function AlkesPage() {
                 setSuccess("Alkes berhasil ditambahkan!");
             }
 
-            setDataForm({ nama_alkes: "", stok_alkes: "", harga_alkes: "", gambar: null });
             setEditingAlkesId(null);
+            form.resetFields();
             setTimeout(() => setSuccess(""), 3000);
             loadAlkes();
         } catch (err) {
@@ -81,6 +87,7 @@ export default function AlkesPage() {
         }
     };
 
+    // Handle delete alkes
     const handleDelete = async (id) => {
         if (!window.confirm("Yakin ingin menghapus alkes ini?")) return;
         try {
@@ -98,94 +105,63 @@ export default function AlkesPage() {
         }
     };
 
+    // Handle edit alkes (mengisi form dengan data alkes yang dipilih)
     const handleEdit = (alkesItem) => {
-        setDataForm({
-            nama_alkes: alkesItem.nama_alkes,
-            stok_alkes: alkesItem.stok_alkes.toString(),
-            harga_alkes: alkesItem.harga_alkes.toString(),
-            gambar: null
-        });
         setEditingAlkesId(alkesItem.id);
+        form.setFieldsValue({
+            nama_alkes: alkesItem.nama_alkes,
+            stok_alkes: alkesItem.stok_alkes,
+            harga_alkes: alkesItem.harga_alkes,
+            gambar: alkesItem.gambar
+                ? [{
+                    uid: '-1',
+                    name: alkesItem.gambar.split('/').pop(),
+                    status: 'done',
+                    url: alkesItem.gambar,
+                }]
+                : []
+        });
     };
 
+    // Kolom tabel
+    const columns = [
+        { title: '#', dataIndex: 'index', key: 'index', render: (_, __, i) => i + 1 },
+        { title: 'Nama Alkes', dataIndex: 'nama_alkes', key: 'nama_alkes' },
+        { title: 'Stok', dataIndex: 'stok_alkes', key: 'stok_alkes' },
+        { title: 'Harga', dataIndex: 'harga_alkes', key: 'harga_alkes', render: (h) => `Rp ${h.toLocaleString()}` },
+        { title: 'Gambar', dataIndex: 'gambar', key: 'gambar', render: (g, row) => g && <img src={g} alt={row.nama_alkes} className="w-16 h-16 object-cover rounded" /> },
+        {
+            title: 'Aksi',
+            key: 'aksi',
+            render: (_, row) => (
+                <div className="flex gap-2 items-center">
+                    <button onClick={() => handleEdit(row)} disabled={loading} className="p-1 rounded-full hover:bg-blue-100 transition-colors">
+                        <AiOutlineEdit className="text-blue-400 text-2xl hover:text-blue-600" />
+                    </button>
+                    <button onClick={() => handleDelete(row.id)} disabled={loading} className="p-1 rounded-full hover:bg-red-100 transition-colors">
+                        <AiFillDelete className="text-red-400 text-2xl hover:text-red-600" />
+                    </button>
+                </div>
+            )
+        }
+    ];
+
     return (
-        <div className="max-w-6xl mx-auto p-6">
+        <div className="max-w-7xl mx-auto p-2">
             <div className="mb-6">
                 <h2 className="text-3xl font-bold text-gray-800 mb-2">
                     Manajemen Alat Kesehatan
                 </h2>
             </div>
+            {/* Alert */}
             {error && <AlertBox type="error">{error}</AlertBox>}
             {success && <AlertBox type="success">{success}</AlertBox>}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="bg-white rounded-2xl shadow-lg p-6 h-fit">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                        {editingAlkesId ? "Edit Alkes" : "Tambah Alkes Baru"}
-                    </h3>
-                    <form className="space-y-4" onSubmit={handleSubmit}>
-                        <input
-                            type="text"
-                            name="nama_alkes"
-                            value={dataForm.nama_alkes}
-                            placeholder="Nama Alkes"
-                            onChange={handleChange}
-                            required
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
-                        />
-                        <input
-                            type="number"
-                            name="stok_alkes"
-                            value={dataForm.stok_alkes}
-                            placeholder="Stok"
-                            onChange={handleChange}
-                            required
-                            min="0"
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
-                        />
-                        <input
-                            type="number"
-                            name="harga_alkes"
-                            value={dataForm.harga_alkes}
-                            placeholder="Harga"
-                            onChange={handleChange}
-                            required
-                            min="0"
-                            step="0.01"
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
-                        />
-                        <input
-                            type="file"
-                            name="gambar"
-                            accept="image/*"
-                            onChange={handleChange}
-                            className="w-full p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                            disabled={loading}
-                        />
-                        <button
-                            type="submit"
-                            className="px-6 py-3 bg-[var(--color-primary)] hover:bg-[var(--color-pudar2)] text-white font-semibold rounded-2xl"
-                            disabled={loading}
-                        >
-                            {loading ? "Mohon Tunggu..." : (editingAlkesId ? "Perbarui Alkes" : "Tambah Alkes")}
-                        </button>
-                        {editingAlkesId && (
-                            <button
-                                type="button"
-                                onClick={() => { setEditingAlkesId(null); setDataForm({ nama_alkes: "", stok_alkes: "", harga_alkes: "", gambar: null }); }}
-                                className="ml-4 px-6 py-3 bg-gray-400 hover:bg-gray-500 text-white font-semibold rounded-2xl"
-                                disabled={loading}
-                            >
-                                Batal Edit
-                            </button>
-                        )}
-                    </form>
-                </div>
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden h-fit">
-                    <div className="px-6 py-4 ">
+            {/* Grid dua kolom: Tabel di atas, form di bawah */}
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-8 mb-7">
+                {/* Alkes Table */}
+                <div className="bg-white rounded-2xl shadow-lg overflow-hidden h-fit p-6 ">
+                    <div className="px-6 py-4  ">
                         <h3 className="text-lg font-semibold">
                             Daftar Alat Kesehatan ({alkes.length})
                         </h3>
@@ -193,56 +169,87 @@ export default function AlkesPage() {
                     {loading && <LoadingSpinner text="Memuat data alkes..." />}
                     {!loading && alkes.length === 0 && <EmptyState text="Belum ada data alkes" />}
                     {!loading && alkes.length > 0 && (
-                        <GenericTable
-                            columns={["#", "Nama Alkes", "Stok", "Harga", "Gambar", "Aksi"]}
-                            data={alkes}
-                            renderRow={(alkesItem, index) => (
-                                <>
-                                    <td className="px-6 py-4 font-medium text-gray-700">
-                                        {index + 1}.
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="font-semibold text-[var(--color-primary)]">
-                                            {alkesItem.nama_alkes}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="text-gray-600">
-                                            {alkesItem.stok_alkes}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="text-gray-600">
-                                            Rp {alkesItem.harga_alkes.toLocaleString()}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {alkesItem.gambar && (
-                                            <img src={alkesItem.gambar} alt={alkesItem.nama_alkes} className="w-16 h-16 object-cover rounded" />
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4 max-w-xs">
-                                        <div className="flex gap-2 items-center">
-                                            <button
-                                                onClick={() => handleEdit(alkesItem)}
-                                                disabled={loading}
-                                                className="p-1 rounded-full hover:bg-blue-100 transition-colors"
-                                            >
-                                                <AiOutlineEdit className="text-blue-400 text-2xl hover:text-blue-600" />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(alkesItem.id)}
-                                                disabled={loading}
-                                                className="p-1 rounded-full hover:bg-red-100 transition-colors"
-                                            >
-                                                <AiFillDelete className="text-red-400 text-2xl hover:text-red-600" />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </>
-                            )}
+                        <Table
+                            columns={columns}
+                            dataSource={alkes}
+                            rowKey="id"
+                            pagination={false}
+                            size="center"
                         />
                     )}
+                </div>
+                {/* Form Card */}
+                <div className="bg-white rounded-2xl shadow-lg p-6 h-fit">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                        {editingAlkesId ? "Edit Alkes" : "Tambah Alkes Baru"}
+                    </h3>
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        onFinish={handleSubmit}
+                        initialValues={{
+                            nama_alkes: '',
+                            stok_alkes: '',
+                            harga_alkes: '',
+                            gambar: []
+                        }}
+                    >
+                        <Form.Item
+                            label="Nama Alkes"
+                            name="nama_alkes"
+                            rules={[{ required: true, message: 'Nama alkes wajib diisi!' }]}
+                        >
+                            <Input disabled={loading} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Stok"
+                            name="stok_alkes"
+                            rules={[{ required: true, message: 'Stok wajib diisi!' }]}
+                        >
+                            <InputNumber min={0} style={{ width: '100%' }} disabled={loading} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Harga"
+                            name="harga_alkes"
+                            rules={[{ required: true, message: 'Harga wajib diisi!' }]}
+                        >
+                            <InputNumber min={0} style={{ width: '100%' }} disabled={loading} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Gambar"
+                            name="gambar"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                        >
+                            <Upload
+                                name="gambar"
+                                listType="picture"
+                                beforeUpload={() => false} // prevent auto upload
+                                maxCount={1}
+                                disabled={loading}
+                                accept="image/*"
+                            >
+                                <Button>Upload Gambar</Button>
+                            </Upload>
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit" loading={loading}>
+                                {editingAlkesId ? "Perbarui Alkes" : "Tambah Alkes"}
+                            </Button>
+                            {editingAlkesId && (
+                                <Button
+                                    style={{ marginLeft: 8 }}
+                                    onClick={() => {
+                                        setEditingAlkesId(null);
+                                        form.resetFields();
+                                    }}
+                                    disabled={loading}
+                                >
+                                    Batal Edit
+                                </Button>
+                            )}
+                        </Form.Item>
+                    </Form>
                 </div>
             </div>
         </div>
