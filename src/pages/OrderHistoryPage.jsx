@@ -55,12 +55,7 @@ export default function OrderHistoryPage() {
     };
 
     const columns = [
-        {
-            title: 'Order Number',
-            dataIndex: 'order_number',
-            key: 'order_number',
-            render: (orderNumber) => orderNumber || 'N/A'
-        },
+
         {
             title: 'Produk',
             dataIndex: 'nama_produk',

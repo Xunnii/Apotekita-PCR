@@ -68,6 +68,11 @@ const menuItems = [
         icon: <StarOutlined />,
         label: 'Testimoni',
     },
+    {
+        key: '/admin/resep-obat',
+        icon: <MedicineBoxOutlined />,
+        label: 'Resep Obat',
+    },
 ];
 
 export default function Sidebar({ sidebarToggle, setSidebarToggle }) {

@@ -13,7 +13,8 @@ import {
     SettingOutlined,
     ProfileOutlined,
     MenuOutlined,
-    StarOutlined
+    StarOutlined,
+    ClockCircleOutlined
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { supabase } from '../config/supabase';
@@ -49,14 +50,10 @@ const items = [
     },
     {
         label: 'FAQ',
-        key: '/',
+        key: '/faq',
         icon: <AppstoreOutlined />,
     },
-    {
-        label: 'Artikel',
-        key: '/',
-        icon: <AppstoreOutlined />,
-    },
+
     {
         label: 'Outlet Kami',
         key: '/',
@@ -145,6 +142,12 @@ export default function AppHeader() {
             icon: <ShoppingCartOutlined />,
             label: 'Keranjang',
             onClick: () => navigate('/keranjang')
+        },
+        {
+            key: 'Riwayat Pembelian',
+            icon: <ClockCircleOutlined />,
+            label: 'Riwayat Pembelian',
+            onClick: () => navigate('/Riwayat-Pembelian')
         },
         {
             key: 'testimoni',

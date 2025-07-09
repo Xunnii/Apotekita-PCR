@@ -17,6 +17,7 @@ import PrediksiStokPage from './pages/admin/PrediksiStokPage';
 import TestimoniForm from './pages/TestimoniForm';
 import TestimoniAdminPage from './pages/admin/TestimoniAdminPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
+import ObatResepAdminPage from './pages/admin/ObatResepAdminPage';
 
 // Lazy load components
 const HomePage = lazy(() => import('./pages/guest/HomePage'));
@@ -39,6 +40,8 @@ const DetailAlkesPage = lazy(() => import('./pages/guest/DetailAlkesPage'));
 const PelangganPage = lazy(() => import('./pages/admin/PelangganPage'));
 const RiwayatPembelianPage = lazy(() => import('./pages/admin/RiwayatPembelianPage'));
 const SalesReportPage = lazy(() => import('./pages/admin/SalesReportPage'));
+const FAQPage = lazy(() => import('./pages/FAQPage'));
+const InputResepPage = lazy(() => import('./pages/guest/InputResepPage'));
 
 export default function App() {
   return (
@@ -54,6 +57,9 @@ export default function App() {
           <Route path="/cek-mata" element={<CekMataPage />} />
           <Route path="/konsultasi-dokter" element={<KonsultasiDokter />} />
           <Route path="/apoteker" element={<ApotekerPage />} />
+          <Route path="riwayat-pembelian" element={<OrderHistoryPage />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/kirim-resep" element={<InputResepPage />} />
           <Route path="/profile" element={
             <PrivateRoute>
               <ProfilePage />
@@ -87,11 +93,11 @@ export default function App() {
           <Route path="alkes" element={<AlkesPage />} />
           <Route path="pelanggan" element={<PelangganPage />} />
           <Route path="riwayat-pembelian" element={<RiwayatPembelianPage />} />
-          <Route path="riwayat-pembelian" element={<OrderHistoryPage />} />
           <Route path="laporan-penjualan" element={<SalesReportPage />} />
           <Route path="konsultasi-dokter" element={<ConsultationAdminPage />} />
           <Route path="prediksi-stok" element={<PrediksiStokPage />} />
           <Route path="testimoni" element={<TestimoniAdminPage />} />
+          <Route path="resep-obat" element={<ObatResepAdminPage />} />
         </Route>
 
         {/* Rute halaman error - tanpa MainLayout */}
