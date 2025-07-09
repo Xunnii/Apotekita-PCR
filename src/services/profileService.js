@@ -15,10 +15,22 @@ export async function getPelangganById(id) {
     return { data, error };
 }
 
-export async function updatePelangganProfile(id, { nama, alamat, phone, foto_profil }) {
+// Fungsi untuk menentukan segmentasi berdasarkan total pembelian
+export function getSegmentasiByTotal(total) {
+    if (total >= 5000000) return 'platinum';
+    if (total >= 1000000) return 'gold';
+    return 'silver';
+}
+
+// Update profile pelanggan, sekarang bisa update segmentasi dan total_pembelian
+export async function updatePelangganProfile(id, { nama, alamat, phone, foto_profil, segmentasi, total_pembelian }) {
+    const updateData = { nama, alamat, phone };
+    if (foto_profil !== undefined) updateData.foto_profil = foto_profil;
+    if (segmentasi !== undefined) updateData.segmentasi = segmentasi;
+    if (total_pembelian !== undefined) updateData.total_pembelian = total_pembelian;
     return await supabase
         .from('pelanggan')
-        .update({ nama, alamat, phone, foto_profil })
+        .update(updateData)
         .eq('id', id);
 }
 

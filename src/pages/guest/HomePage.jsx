@@ -15,7 +15,7 @@ export default function HomePage() {
             <Features />
             <NewsSection />
             {/* <CallToAction /> */}
-            <TeamSection />
+            {/* <TeamSection /> */}
             <Testimonials />
         </div>
     );

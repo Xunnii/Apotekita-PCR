@@ -27,8 +27,10 @@ export default function FAQPage() {
     if (error) return <Alert type="error" message={error} />;
 
     return (
-        <div style={{ maxWidth: 900, margin: '40px auto', padding: 16 }}>
-            <h2 style={{ textAlign: 'center', marginBottom: 24 }}>Frequently Asked Questions</h2>
+        <div style={{ maxWidth: 900, margin: '40px auto', padding: 16, marginBottom: 200 }}>
+            {/* ...konten FAQ... */}
+
+            <h2 className='text-primary text-6xl font-Palisade text-center'>Frequently Asked Questions</h2>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, alignItems: 'flex-start', justifyContent: 'center' }}>
                 <div style={{ flex: '1 1 350px', minWidth: 0 }}>
                     <Collapse accordion>

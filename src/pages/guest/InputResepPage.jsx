@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
-import { Form, Input, Upload, Button, message, Card } from 'antd';
+import { Form, Input, Upload, Button, Card, Alert } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { uploadResepImage, insertObatResep } from '../../services/obatResepService';
 
 export default function InputResepPage() {
     const [loading, setLoading] = useState(false);
+    const [alert, setAlert] = useState(null); // { type: 'success'|'error', message: string }
+    // Untuk auto-dismiss alert
+    React.useEffect(() => {
+        if (alert) {
+            const timer = setTimeout(() => setAlert(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [alert]);
 
     const [form] = Form.useForm();
 
@@ -19,10 +27,10 @@ export default function InputResepPage() {
             const imagePath = await uploadResepImage(file, 'guest');
             // Simpan ke tabel obatresep
             await insertObatResep({ keterangan: values.keterangan, gambar: imagePath });
-            message.success('Resep berhasil dikirim!');
             form.resetFields();
+            setAlert({ type: 'success', message: 'Resep berhasil dikirim! Kami akan segera memprosesnya.' });
         } catch (err) {
-            message.error('Gagal mengirim resep: ' + (err.message || ''));
+            setAlert({ type: 'error', message: 'Gagal mengirim resep: ' + (err.message || '') });
         } finally {
             setLoading(false);
         }
@@ -30,7 +38,17 @@ export default function InputResepPage() {
 
     return (
         <div style={{ maxWidth: 420, margin: '40px auto', padding: 16 }}>
-            <Card title="Kirim Resep Obat" bordered>
+            <Card title="Kirim Resep Obat" variant="outlined">
+                {alert && (
+                    <Alert
+                        style={{ marginBottom: 16 }}
+                        message={alert.message}
+                        type={alert.type}
+                        showIcon
+                        closable
+                        onClose={() => setAlert(null)}
+                    />
+                )}
                 <Form layout="vertical" form={form} onFinish={handleFinish}>
                     <Form.Item
                         label="Keterangan"

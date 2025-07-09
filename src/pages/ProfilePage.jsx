@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../config/supabase';
 import { getPelangganById, updatePelangganProfile, uploadProfilePhoto } from '../services/profileService';
-import { Card, Table, Tag, Button } from 'antd';
+import { Card, Table, Tag, Button, Alert } from 'antd';
 
 export default function ProfilePage() {
     const [profile, setProfile] = useState(null);
@@ -247,6 +247,7 @@ export default function ProfilePage() {
                             <button
                                 type="button"
                                 className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+                                style={{ color: 'white' }}
                                 onClick={handleRemovePhoto}
                                 disabled={photoUploading}
                             >
@@ -259,6 +260,18 @@ export default function ProfilePage() {
                 <div className="mb-4">
                     <div className="text-gray-600 text-sm mb-1">Email</div>
                     <div className="font-semibold">{profile.email}</div>
+                    <Alert
+                        message={`Segmentasi: ${profile.segmentasi?.charAt(0).toUpperCase() + profile.segmentasi?.slice(1)}`}
+                        type={
+                            profile.segmentasi === 'platinum'
+                                ? 'success'
+                                : profile.segmentasi === 'gold'
+                                    ? 'warning'
+                                    : 'info'
+                        }
+                        showIcon
+                        style={{ marginTop: 12, marginBottom: 12 }}
+                    />
                 </div>
                 <form onSubmit={handleUpdate}>
                     <div className="mb-4">
@@ -304,29 +317,14 @@ export default function ProfilePage() {
                     {success && <div className="text-green-600 text-sm mt-2">{success}</div>}
                     {error && <div className="text-red-600 text-sm mt-2">{error}</div>}
                 </form>
-            </div>
-
-            {/* Order History Section */}
-            <div className="bg-white rounded-xl shadow p-8">
-                <h2 className="text-2xl font-bold mb-6 text-center">Riwayat Pesanan</h2>
-                {ordersLoading ? (
-                    <div className="text-center py-8">Loading orders...</div>
-                ) : orders.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                        <p className="text-lg mb-4">Belum ada pesanan</p>
-                        <Button type="primary" onClick={() => window.location.href = '/daftar-obat'}>
-                            Mulai Belanja
-                        </Button>
-                    </div>
-                ) : (
-                    <Table
-                        columns={orderColumns}
-                        dataSource={orders}
-                        rowKey="id"
-                        pagination={{ pageSize: 10 }}
-                        size="small"
-                    />
-                )}
+                <a
+                    href="https://apotek-teal.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full mt-4 text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
+                >
+                    Kunjungi Apotek Online
+                </a>
             </div>
         </div>
     );

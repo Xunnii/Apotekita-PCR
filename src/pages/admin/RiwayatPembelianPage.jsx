@@ -5,6 +5,7 @@ import LoadingSpinner from '../../components/Note/LoadingSpinner';
 import { supabase } from '../../config/supabase';
 import { AiFillDelete, AiOutlineEdit, AiOutlinePlus } from "react-icons/ai";
 import { Form, Input, InputNumber, Select, Button, DatePicker, Table } from 'antd';
+import { getSegmentasiByTotal, updatePelangganProfile } from '../../services/profileService';
 import dayjs from 'dayjs';
 
 export default function RiwayatPembelianPage() {
@@ -108,6 +109,19 @@ export default function RiwayatPembelianPage() {
                     .from('riwayat_pembelian')
                     .insert([payload]);
                 if (error) throw error;
+
+                // Setelah insert, update total_pembelian & segmentasi pelanggan
+                // 1. Ambil total pembelian terbaru pelanggan
+                const { data: pembelianData, error: pembelianError } = await supabase
+                    .from('riwayat_pembelian')
+                    .select('total_pembelian')
+                    .eq('pelanggan_id', values.pelanggan_id);
+                if (pembelianError) throw pembelianError;
+                const totalBaru = (pembelianData || []).reduce((sum, item) => sum + (item.total_pembelian || 0), 0);
+                console.log('totalBaru:', totalBaru);
+                const segmentasiBaru = getSegmentasiByTotal(totalBaru);
+                await updatePelangganProfile(values.pelanggan_id, { segmentasi: segmentasiBaru, total_pembelian: totalBaru });
+
                 setSuccess("Riwayat berhasil ditambahkan!");
             }
             setShowForm(false);
@@ -208,7 +222,7 @@ export default function RiwayatPembelianPage() {
     return (
         <div className="max-w-6xl mx-auto p-6">
             <div className="mb-6 flex items-center justify-between">
-                <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                <h2 className="text-3xl font-bold text-primary mb-2">
                     Riwayat Pembelian
                 </h2>
                 <Button

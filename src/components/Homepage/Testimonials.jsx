@@ -34,7 +34,7 @@ export default function Testimonials() {
     return (
         <section className="bg-[#f4f4f4] py-20 font-Raleway">
             <div className="container mx-auto px-4">
-                <h2 className="text-5xl font-bold text-[#A63D3D] mb-6 text-center leading-tight">
+                <h2 className="text-7xl font-Palisade text-primary  mb-6 text-center leading-tight">
                     Testimoni Pelanggan
                 </h2>
                 <p className="text-xl text-black mb-12 max-w-2xl mx-auto text-center">

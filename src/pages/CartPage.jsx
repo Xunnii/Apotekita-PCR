@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Card, InputNumber, Modal, Steps, Select, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
+import { getSegmentasiByTotal, updatePelangganProfile } from '../services/profileService';
 
 const { Step } = Steps;
 
@@ -112,7 +113,16 @@ export default function CartPage() {
                     return;
                 }
             }
-            // 4. Kosongkan cart dan redirect
+            // 4. Update total_pembelian & segmentasi pelanggan
+            const { data: pembelianData } = await supabase
+                .from('riwayat_pembelian')
+                .select('total_pembelian')
+                .eq('pelanggan_id', pelanggan.id);
+            const totalBaru = (pembelianData || []).reduce((sum, item) => sum + (item.total_pembelian || 0), 0);
+            const segmentasiBaru = getSegmentasiByTotal(totalBaru);
+            await updatePelangganProfile(pelanggan.id, { segmentasi: segmentasiBaru, total_pembelian: totalBaru });
+
+            // 5. Kosongkan cart dan redirect
             localStorage.removeItem('cart');
             setCart([]);
             setShowConfirm(false);

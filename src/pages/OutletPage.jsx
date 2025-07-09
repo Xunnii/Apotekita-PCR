@@ -16,7 +16,7 @@ export default function OutletPage() {
 
     return (
         <div style={{ maxWidth: 1100, margin: '40px auto', padding: 16 }}>
-            <h2 style={{ textAlign: 'center', marginBottom: 24 }}>Daftar Outlet Apotek Keluarga</h2>
+            <h2 className='text-primary text-6xl font-Palisade text-center'>Daftar Outlet Apotek Keluarga</h2>
             {loading ? <Spin /> : error ? <Alert type="error" message={error} /> : (
                 <List
                     dataSource={outlets}

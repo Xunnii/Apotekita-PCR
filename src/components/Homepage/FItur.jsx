@@ -6,6 +6,7 @@ import { AiFillEye } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import { ShoppingCartOutlined } from "@ant-design/icons";
+import { GlobalOutlined } from '@ant-design/icons';
 
 const tabList = [
     {
@@ -50,6 +51,24 @@ const tabList = [
             <span>
                 <AiFillFileAdd className="inline mr-2" />
                 Resep
+            </span>
+        ),
+    },
+    {
+        key: "apotek-online",
+        tab: (
+            <span>
+                <GlobalOutlined className="inline mr-2" />
+                Apotek Online
+            </span>
+        ),
+    },
+    {
+        key: "admin-vetra",
+        tab: (
+            <span>
+                <GlobalOutlined className="inline mr-2" />
+                Admin Vetra
             </span>
         ),
     },
@@ -114,6 +133,34 @@ const contentList = {
             >
                 Kirim Resep Obat
             </Link>
+        </div>
+    ),
+    "apotek-online": (
+        <div className="text-center">
+            <h3 className="text-xl font-bold mb-2">Apotek Online</h3>
+            <p>Akses apotek online kami untuk layanan lebih lengkap!</p>
+            <a
+                href="https://apotek-teal.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-4 px-6 py-2 bg-[#A63D3D] text-white rounded shadow hover:bg-[#922c2c] transition"
+            >
+                Kunjungi Apotek Online
+            </a>
+        </div>
+    ),
+    "admin-vetra": (
+        <div className="text-center">
+            <h3 className="text-xl font-bold mb-2">Admin Vetra</h3>
+            <p>Admin teman saya, akses dashboard Vetra di sini.</p>
+            <a
+                href="https://vetra-project.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-4 px-6 py-2 bg-[#A63D3D] text-white rounded shadow hover:bg-[#922c2c] transition"
+            >
+                Kunjungi Admin Vetra
+            </a>
         </div>
     ),
 };
