@@ -1,0 +1,47 @@
+[
+    {
+        "id": 1,
+        "nama_outlet": "Apotek Keluarga 9 Pekanbaru",
+        "alamat": "Alamat Apotek Keluarga 9 Pekanbaru",
+        "kota": "Pekanbaru",
+        "telepon": "-",
+        "jam_buka": "-",
+        "embed_map_url": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15958.750279165724!2d101.36647723260006!3d0.46385690000002106!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5a9eb30e39b57%3A0xab49f5c5d309baba!2sApotek%20Keluarga%209%20Pekanbaru!5e0!3m2!1sen!2sid!4v1752022327878!5m2!1sen!2sid"
+    },
+    {
+        "id": 2,
+        "nama_outlet": "Apotek Keluarga 9 Pekanbaru (Copy)",
+        "alamat": "Alamat Apotek Keluarga 9 Pekanbaru",
+        "kota": "Pekanbaru",
+        "telepon": "-",
+        "jam_buka": "-",
+        "embed_map_url": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15958.750279165724!2d101.36647723260006!3d0.46385690000002106!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5a9eb30e39b57%3A0xab49f5c5d309baba!2sApotek%20Keluarga%209%20Pekanbaru!5e0!3m2!1sen!2sid!4v1752022327878!5m2!1sen!2sid"
+    },
+    {
+        "id": 3,
+        "nama_outlet": "Apotek Keluarga",
+        "alamat": "Alamat Apotek Keluarga",
+        "kota": "Pekanbaru",
+        "telepon": "-",
+        "jam_buka": "-",
+        "embed_map_url": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15958.750979785864!2d101.39570033955077!3d0.4635461000000084!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5a8c1a1c3b615%3A0x8b5f4e3b0c132877!2sApotek%20Keluarga!5e0!3m2!1sen!2sid!4v1752022351094!5m2!1sen!2sid"
+    },
+    {
+        "id": 4,
+        "nama_outlet": "Apotek Keluarga 18 Pekanbaru",
+        "alamat": "Alamat Apotek Keluarga 18 Pekanbaru",
+        "kota": "Pekanbaru",
+        "telepon": "-",
+        "jam_buka": "-",
+        "embed_map_url": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15958.779162820296!2d101.4350365395508!3d0.4508663000000056!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5af27f7fceb47%3A0xa6a68b17c6f7a00c!2sApotek%20Keluarga%2018%20Pekanbaru!5e0!3m2!1sen!2sid!4v1752022370477!5m2!1sen!2sid"
+    },
+    {
+        "id": 5,
+        "nama_outlet": "APOTEK KELUARGA 30",
+        "alamat": "Alamat APOTEK KELUARGA 30",
+        "kota": "Pekanbaru",
+        "telepon": "-",
+        "jam_buka": "-",
+        "embed_map_url": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15958.72526358713!2d101.3505704395508!3d0.47482070000003246!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5a9d1a3585e7b%3A0x49ffc07873cf6b26!2sAPOTEK%20KELUARGA%2030!5e0!3m2!1sen!2sid!4v1752022387187!5m2!1sen!2sid"
+    }
+]

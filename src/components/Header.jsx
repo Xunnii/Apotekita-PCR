@@ -56,7 +56,7 @@ const items = [
 
     {
         label: 'Outlet Kami',
-        key: '/',
+        key: '/outlet',
         icon: <AppstoreOutlined />,
     },
     // {
@@ -133,6 +133,12 @@ export default function AppHeader() {
             icon: <SettingOutlined />,
             label: 'Settings',
             onClick: () => navigate('/profile')
+        },
+        {
+            key: 'kirim-resep',
+            icon: <MedicineBoxOutlined />,
+            label: 'Kirim Resep',
+            onClick: () => navigate('/kirim-resep')
         },
         {
             type: 'divider'
@@ -344,7 +350,7 @@ export default function AppHeader() {
                 onClose={() => setDrawerOpen(false)}
                 open={drawerOpen}
                 className="md:hidden"
-                bodyStyle={{ padding: 0 }}
+                styles={{ body: { padding: 0 } }}
             >
                 <Menu
                     onClick={handleMobileMenuClick}

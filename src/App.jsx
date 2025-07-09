@@ -42,6 +42,7 @@ const RiwayatPembelianPage = lazy(() => import('./pages/admin/RiwayatPembelianPa
 const SalesReportPage = lazy(() => import('./pages/admin/SalesReportPage'));
 const FAQPage = lazy(() => import('./pages/FAQPage'));
 const InputResepPage = lazy(() => import('./pages/guest/InputResepPage'));
+const OutletPage = lazy(() => import('./pages/OutletPage'));
 
 export default function App() {
   return (
@@ -60,6 +61,7 @@ export default function App() {
           <Route path="riwayat-pembelian" element={<OrderHistoryPage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/kirim-resep" element={<InputResepPage />} />
+          <Route path="/outlet" element={<OutletPage />} />
           <Route path="/profile" element={
             <PrivateRoute>
               <ProfilePage />

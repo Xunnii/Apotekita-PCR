@@ -93,9 +93,9 @@ export default function DaftarAlkesPage() {
 
     return (
         <div>
-            <section className="font-Raleway bg-gray-50 min-h-screen py-12 px-4">
+            <section className="font-Raleway bg-gray-50 min-h-screen mt-2 mr-4 ml-4 mb-10 px-4">
                 <div className="max-w-6xl mx-auto">
-                    <h2 className="font-RalewayExtra text-[32px] text-2xl font-bold text-blue-800 mb-8 text-center">
+                    <h2 className="font-RalewayExtra text-[32px] text-2xl font-bold text-primary mb-8 text-center">
                         Daftar Alat Kesehatan
                     </h2>
                     {/* Search Bar */}

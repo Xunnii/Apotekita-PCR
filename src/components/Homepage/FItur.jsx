@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Card } from "antd";
-import { AiFillMedicineBox } from "react-icons/ai";
+import { AiFillMedicineBox, AiFillFileAdd } from "react-icons/ai";
 import { CiStethoscope } from "react-icons/ci";
 import { AiFillEye } from "react-icons/ai";
 import { Link } from "react-router-dom";
@@ -41,6 +41,15 @@ const tabList = [
             <span>
                 <ShoppingCartOutlined className="inline mr-2" />
                 Keranjang
+            </span>
+        ),
+    },
+    {
+        key: "resep",
+        tab: (
+            <span>
+                <AiFillFileAdd className="inline mr-2" />
+                Resep
             </span>
         ),
     },
@@ -92,6 +101,18 @@ const contentList = {
                 className="inline-block mt-4 px-6 py-2 bg-[#A63D3D] text-white rounded shadow hover:bg-[#922c2c] transition"
             >
                 Lihat Keranjang
+            </Link>
+        </div>
+    ),
+    resep: (
+        <div className="text-center">
+            <h3 className="text-xl font-bold mb-2">Kirim Resep</h3>
+            <p>Kirim foto resep obat Anda secara online, praktis dan mudah!</p>
+            <Link
+                to="/kirim-resep"
+                className="inline-block mt-4 px-6 py-2 bg-[#A63D3D] text-white rounded shadow hover:bg-[#922c2c] transition"
+            >
+                Kirim Resep Obat
             </Link>
         </div>
     ),
