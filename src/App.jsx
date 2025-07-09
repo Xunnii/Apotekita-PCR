@@ -16,6 +16,7 @@ import AlkesPage from './pages/admin/AlkesPage';
 import PrediksiStokPage from './pages/admin/PrediksiStokPage';
 import TestimoniForm from './pages/TestimoniForm';
 import TestimoniAdminPage from './pages/admin/TestimoniAdminPage';
+import OrderHistoryPage from './pages/OrderHistoryPage';
 
 // Lazy load components
 const HomePage = lazy(() => import('./pages/guest/HomePage'));
@@ -86,6 +87,7 @@ export default function App() {
           <Route path="alkes" element={<AlkesPage />} />
           <Route path="pelanggan" element={<PelangganPage />} />
           <Route path="riwayat-pembelian" element={<RiwayatPembelianPage />} />
+          <Route path="riwayat-pembelian" element={<OrderHistoryPage />} />
           <Route path="laporan-penjualan" element={<SalesReportPage />} />
           <Route path="konsultasi-dokter" element={<ConsultationAdminPage />} />
           <Route path="prediksi-stok" element={<PrediksiStokPage />} />
