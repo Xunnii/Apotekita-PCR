@@ -19,6 +19,7 @@ import TestimoniAdminPage from './pages/admin/TestimoniAdminPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import ObatResepAdminPage from './pages/admin/ObatResepAdminPage';
 
+
 // Lazy load components
 const HomePage = lazy(() => import('./pages/guest/HomePage'));
 // const HomePage = lazy(() => import('./pages/HomePage'));
@@ -43,6 +44,7 @@ const SalesReportPage = lazy(() => import('./pages/admin/SalesReportPage'));
 const FAQPage = lazy(() => import('./pages/FAQPage'));
 const InputResepPage = lazy(() => import('./pages/guest/InputResepPage'));
 const OutletPage = lazy(() => import('./pages/OutletPage'));
+const ResetPassword = lazy(() => import('./pages/Auth/ResetPassword'));
 
 export default function App() {
   return (
@@ -114,6 +116,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot" element={<Forgot />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
       </Routes>
     </Suspense>
